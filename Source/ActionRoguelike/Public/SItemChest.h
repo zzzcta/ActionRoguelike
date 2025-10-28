@@ -11,13 +11,13 @@ UCLASS()
 class ACTIONROGUELIKE_API ASItemChest : public AActor, public ISGameplayInterface
 {
 	GENERATED_BODY()
-
-	void Interact_Implementation(APawn* InstigatorPawn);
 	
 public:	
 	// Sets default values for this actor's properties
 	ASItemChest();
 
+	void Interact_Implementation(APawn* InstigatorPawn);
+	
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
 
