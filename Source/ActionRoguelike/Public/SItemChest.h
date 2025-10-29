@@ -28,7 +28,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UStaticMeshComponent* LidMesh;
 
 public:	
