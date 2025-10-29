@@ -37,42 +37,6 @@ void ASCharacter::BeginPlay()
 	
 }
 
-void ASCharacter::MoveForward(float value)
-{
-	FRotator ControlRotation = GetControlRotation();
-	ControlRotation.Pitch = 0.0f;
-	ControlRotation.Roll = 0.0f;
-
-	AddMovementInput(ControlRotation.Vector(), value);
-	
-}
-
-void ASCharacter::MoveRight(float value)
-{
-	FRotator ControlRotation = GetControlRotation();
-	ControlRotation.Pitch = 0.0f;
-	ControlRotation.Roll = 0.0f;
-
-	FVector RightVector = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::Y);
-	
-	AddMovementInput(RightVector, value);
-}
-
-void ASCharacter::PrimaryAttack()
-{
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
-}
-
-void ASCharacter::PrimaryInteract()
-{
-	InteractionComponent->PrimaryInteract();
-}
-
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -110,3 +74,46 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed ,this, &ASCharacter::PrimaryInteract);
 }
 
+void ASCharacter::MoveForward(float value)
+{
+	FRotator ControlRotation = GetControlRotation();
+	ControlRotation.Pitch = 0.0f;
+	ControlRotation.Roll = 0.0f;
+
+	AddMovementInput(ControlRotation.Vector(), value);
+	
+}
+
+void ASCharacter::MoveRight(float value)
+{
+	FRotator ControlRotation = GetControlRotation();
+	ControlRotation.Pitch = 0.0f;
+	ControlRotation.Roll = 0.0f;
+
+	FVector RightVector = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::Y);
+	
+	AddMovementInput(RightVector, value);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::FireProjectile, 0.2f);
+	
+}
+
+void ASCharacter::FireProjectile()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+ 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+ 	FActorSpawnParameters SpawnParameters;
+ 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+ 	
+ 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+}
+
+void ASCharacter::PrimaryInteract()
+{
+	InteractionComponent->PrimaryInteract();
+}
