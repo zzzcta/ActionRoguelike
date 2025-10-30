@@ -40,7 +40,7 @@ void USInteractionComponent::PrimaryInteract()
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	
-	FHitResult OutHit;
+	// FHitResult OutHit;
 	TArray<FHitResult> OutHits;
 	
 	FVector EyeLocation;

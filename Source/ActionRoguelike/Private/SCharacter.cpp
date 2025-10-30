@@ -9,7 +9,9 @@
 // This include is added at the top of your SCharacter.cpp file
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
+#include "SProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -38,6 +40,7 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
@@ -110,12 +113,33 @@ void ASCharacter::PrimaryAttack()
 void ASCharacter::FireProjectile()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
- 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
- 	FActorSpawnParameters SpawnParameters;
- 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
- 	SpawnParameters.Instigator = this;
+    
+	FVector CameraLocation = CamaraComp->GetComponentLocation();
+	FRotator CameraRotation = CamaraComp->GetComponentRotation();
+    
+	FVector TraceStart = CameraLocation;
+	FVector TraceEnd = TraceStart + CameraRotation.Vector() * 5000.0f;
 	
- 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+	TArray<FHitResult> HitResults;
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+    
+	FVector TargetLocation = TraceEnd;
+
+	if (GetWorld()->LineTraceMultiByObjectType(HitResults, TraceStart, TraceEnd, ECC_Visibility))
+	{
+		TargetLocation = HitResults[0].Location;
+	}
+	
+	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, TargetLocation);
+	
+	FTransform SpawnTM = FTransform(SpawnRotator, HandLocation);
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Instigator = this;
+	
+	GetWorld()->SpawnActor<ASProjectile>(ProjectileClass, SpawnTM, SpawnParameters); 
 }
 
 void ASCharacter::PrimaryInteract()
