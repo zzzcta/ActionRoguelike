@@ -66,13 +66,15 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
-
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed ,this, &ASCharacter::Jump);
+
+	// Combat
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed ,this, &ASCharacter::PrimaryInteract);
 }
 
