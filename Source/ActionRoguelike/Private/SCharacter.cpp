@@ -8,6 +8,7 @@
 
 // This include is added at the top of your SCharacter.cpp file
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -24,6 +25,7 @@ ASCharacter::ASCharacter()
 	CamaraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	
