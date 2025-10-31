@@ -29,7 +29,7 @@ ASProjectile::ASProjectile()
 void ASProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ensureAlways(OtherActor))
+	if (ensureAlways(OtherActor && OtherActor != GetInstigator()))
 	{
 		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if (AttributeComponent)
