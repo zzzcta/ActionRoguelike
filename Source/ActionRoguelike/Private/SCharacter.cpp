@@ -77,7 +77,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Pressed ,this, &ASCharacter::Jump);
 
 	// Combat
-	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("MagicAttack", IE_Pressed, this, &ASCharacter::MagicAttack);
+	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed ,this, &ASCharacter::PrimaryInteract);
 }
 
@@ -102,15 +103,25 @@ void ASCharacter::MoveRight(float value)
 	AddMovementInput(RightVector, value);
 }
 
-void ASCharacter::PrimaryAttack()
+void ASCharacter::MagicAttack()
 {
-	PlayAnimMontage(AttackAnim);
+	PlayAnimMontage(MagicAttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::FireProjectile, 0.2f);
-	
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
+		FireProjectile(MagicProjectile);
+	}, 0.2f, false);
 }
 
-void ASCharacter::FireProjectile()
+void ASCharacter::BlackHoleAttack()
+{
+	PlayAnimMontage(BlackHoleAttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
+		FireProjectile(BlackHoleProjectile);
+	}, 0.2f, false);
+}
+
+void ASCharacter::FireProjectile(TSubclassOf<ASProjectile> Projectile)
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
     
@@ -139,7 +150,7 @@ void ASCharacter::FireProjectile()
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
 	
-	GetWorld()->SpawnActor<ASProjectile>(ProjectileClass, SpawnTM, SpawnParameters); 
+	GetWorld()->SpawnActor<ASProjectile>(Projectile, SpawnTM, SpawnParameters); 
 }
 
 void ASCharacter::PrimaryInteract()

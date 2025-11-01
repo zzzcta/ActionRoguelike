@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class ASProjectile;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -19,11 +20,17 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 protected:
 	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ProjectileClass;
+	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
+	TSubclassOf<ASProjectile> MagicProjectile;
 
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackAnim;
+	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
+	TSubclassOf<ASProjectile> BlackHoleProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
+	UAnimMontage* MagicAttackAnim;
+
+	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
+	UAnimMontage* BlackHoleAttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 	
@@ -49,14 +56,15 @@ protected:
 
 	void MoveForward(float value);
 	void MoveRight(float value);
-	void PrimaryAttack();
-	void FireProjectile();
+	void MagicAttack();
+	void BlackHoleAttack();
+	void FireProjectile(TSubclassOf<ASProjectile> Projectile);
 	void PrimaryInteract();
 	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

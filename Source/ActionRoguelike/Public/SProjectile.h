@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* ParticleComponent;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float LifeTime{5.0f};
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

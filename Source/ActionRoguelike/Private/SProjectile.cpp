@@ -51,6 +51,6 @@ void ASProjectile::BeginPlay()
 void ASProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
