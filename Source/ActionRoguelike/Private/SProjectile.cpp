@@ -15,7 +15,7 @@ ASProjectile::ASProjectile()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetCollisionProfileName("Projectile");
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASProjectile::OnActorOverlap);
-
+	
 	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComponent");
 	ParticleComponent->SetupAttachment(SphereComponent);
 
@@ -44,7 +44,7 @@ void ASProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 void ASProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
 }
 
 // Called every frame

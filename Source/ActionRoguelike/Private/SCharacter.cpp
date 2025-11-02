@@ -79,6 +79,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	// Combat
 	PlayerInputComponent->BindAction("MagicAttack", IE_Pressed, this, &ASCharacter::MagicAttack);
 	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
+	PlayerInputComponent->BindAction("DashAbility", IE_Pressed, this, &ASCharacter::DashAbility);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed ,this, &ASCharacter::PrimaryInteract);
 }
 
@@ -118,6 +119,15 @@ void ASCharacter::BlackHoleAttack()
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
 		FireProjectile(BlackHoleProjectile);
+	}, 0.2f, false);
+}
+
+void ASCharacter::DashAbility()
+{
+	PlayAnimMontage(MagicAttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
+		FireProjectile(DashProjectile);
 	}, 0.2f, false);
 }
 

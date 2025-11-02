@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
 	TSubclassOf<ASProjectile> BlackHoleProjectile;
 
+	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
+	TSubclassOf<ASProjectile> DashProjectile;
+
 	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
 	UAnimMontage* MagicAttackAnim;
 
@@ -58,6 +61,7 @@ protected:
 	void MoveRight(float value);
 	void MagicAttack();
 	void BlackHoleAttack();
+	void DashAbility();
 	void FireProjectile(TSubclassOf<ASProjectile> Projectile);
 	void PrimaryInteract();
 	
