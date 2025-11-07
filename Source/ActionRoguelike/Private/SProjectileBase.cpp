@@ -43,7 +43,10 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKill()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
-
+		ParticleComponent->DeactivateSystem();
+		ProjectileMovementComponent->StopMovementImmediately();
+		SetActorEnableCollision(false);
+		
 		Destroy();
 	}
 }
@@ -52,5 +55,5 @@ void ASProjectileBase::Explode_Implementation()
 void ASProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	//SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
 }
