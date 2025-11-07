@@ -3,21 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SProjectile.h"
+#include "SProjectileBase.h"
 #include "SDashProjectile.generated.h"
+
+class UParticleSystem;
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API ASDashProjectile : public ASProjectile
+class ACTIONROGUELIKE_API ASDashProjectile : public ASProjectileBase
 {
 	public:
 		ASDashProjectile();
 
 	protected:
-		// Called when the game starts or when spawned
-		virtual void BeginPlay() override;
 	
 		UPROPERTY(EditDefaultsOnly)
 		UParticleSystem* TeleportEnterParticle;
@@ -26,17 +26,22 @@ class ACTIONROGUELIKE_API ASDashProjectile : public ASProjectile
 		UParticleSystem* TeleportExitParticle;
 	
 		UPROPERTY(EditDefaultsOnly)
-		float ExplodeTimer{0.2f};
+		float ExplodeDelay{};
 
-		UFUNCTION()
-		void OnExplodeTimer();
+		UPROPERTY(EditDefaultsOnly)
+		float TeleportDelay{};
+
+		UPROPERTY(EditDefaultsOnly)
+		float TeleportExitParticleDuration{};
 	
-		UFUNCTION()
+		FTimerHandle TimerHandle_ExplodeDelay;
+
+		// Base class using BlueprintNativeEvent, we must override the _Implementation not the Explode()
+		virtual void Explode_Implementation() override;
+
 		void TeleportInstigator();
-	
-		FTimerHandle TimerHandle_ExplodeTimer;
-	
-	
+
+		virtual void BeginPlay() override;
 	
 	GENERATED_BODY()
 	

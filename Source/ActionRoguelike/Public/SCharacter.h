@@ -12,7 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
 class UAnimMontage;
-class ASProjectile;
+class ASProjectileBase;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -21,13 +21,13 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectile> MagicProjectile;
+	TSubclassOf<ASProjectileBase> MagicProjectile;
 
 	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectile> BlackHoleProjectile;
+	TSubclassOf<ASProjectileBase> BlackHoleProjectile;
 
 	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectile> DashProjectile;
+	TSubclassOf<ASProjectileBase> DashProjectile;
 
 	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
 	UAnimMontage* MagicAttackAnim;
@@ -62,7 +62,7 @@ protected:
 	void MagicAttack();
 	void BlackHoleAttack();
 	void DashAbility();
-	void FireProjectile(TSubclassOf<ASProjectile> Projectile);
+	void FireProjectile(TSubclassOf<ASProjectileBase> Projectile);
 	void PrimaryInteract();
 	
 public:	

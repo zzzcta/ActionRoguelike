@@ -2,39 +2,51 @@
 
 
 #include "SDashProjectile.h"
-
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ASDashProjectile::ASDashProjectile()
 {
 	TeleportEnterParticle = CreateDefaultSubobject<UParticleSystem>("TeleportEnterParticle");
+	ExplodeDelay = 0.2f;
+	TeleportDelay = 0.2f;
+	TeleportExitParticleDuration = 0.2f;
+	
+	ProjectileMovementComponent->InitialSpeed = 6000.f;
 }
-
 
 void ASDashProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(TimerHandle_ExplodeTimer, this, &ASDashProjectile::OnExplodeTimer, ExplodeTimer, false);
+	GetWorldTimerManager().SetTimer(TimerHandle_ExplodeDelay, this, &ASDashProjectile::Explode, ExplodeDelay, false);
 }
 
-void ASDashProjectile::OnExplodeTimer()
+void ASDashProjectile::Explode_Implementation()
 {
+	GetWorldTimerManager().ClearTimer(TimerHandle_ExplodeDelay);
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleportEnterParticle, GetActorLocation(), GetActorRotation());
+	ParticleComponent->DeactivateSystem();
 	ProjectileMovementComponent->StopMovementImmediately();
-	ParticleComponent->SetTemplate(TeleportEnterParticle);
-	ParticleComponent->Activate();
-	GetWorldTimerManager().SetTimer(TimerHandle_ExplodeTimer, this, &ASDashProjectile::TeleportInstigator, ExplodeTimer, false);
+	SetActorEnableCollision(false);
+	
+	FTimerHandle TimerHandle_TeleportDelay;
+	GetWorldTimerManager().SetTimer(TimerHandle_TeleportDelay, this, &ASDashProjectile::TeleportInstigator, TeleportDelay, false);
 }
 
 void ASDashProjectile::TeleportInstigator()
 {
-	FRotator ProjectileRotation = this->GetActorRotation();
-	
-	FRotator CleanYawRotation = FRotator(0.0f, ProjectileRotation.Yaw, 0.0f);
-	GetInstigator()->TeleportTo(this->GetActorLocation(), CleanYawRotation);
-	ParticleComponent->SetTemplate(TeleportExitParticle);
-	ParticleComponent->Activate();
-	GetWorldTimerManager().SetTimer(TimerHandle_ExplodeTimer, [this]
+	AActor* ActorInstigator = GetInstigator();
+
+	if ensure(ActorInstigator)
 	{
-		Destroy();
-	},ExplodeTimer, false);
+		ActorInstigator->TeleportTo(this->GetActorLocation(), ActorInstigator->GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleportEnterParticle, GetActorLocation(), GetActorRotation());
+		FTimerHandle TimerHandle_EnterParticleDelay;
+		GetWorldTimerManager().SetTimer(TimerHandle_EnterParticleDelay, [this]
+			{
+				Destroy();
+			},TeleportExitParticleDuration, false);
+					
+	}
 }

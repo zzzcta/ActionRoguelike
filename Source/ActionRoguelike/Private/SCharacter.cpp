@@ -9,7 +9,7 @@
 // This include is added at the top of your SCharacter.cpp file
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
-#include "SProjectile.h"
+#include "SProjectileBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -131,7 +131,7 @@ void ASCharacter::DashAbility()
 	}, 0.2f, false);
 }
 
-void ASCharacter::FireProjectile(TSubclassOf<ASProjectile> Projectile)
+void ASCharacter::FireProjectile(TSubclassOf<ASProjectileBase> Projectile)
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
     
@@ -140,17 +140,24 @@ void ASCharacter::FireProjectile(TSubclassOf<ASProjectile> Projectile)
     
 	FVector TraceStart = CameraLocation;
 	FVector TraceEnd = TraceStart + CameraRotation.Vector() * 5000.0f;
+
+	FCollisionShape CollisionShape;
+	CollisionShape.SetSphere(20.f);
 	
-	TArray<FHitResult> HitResults;
+	FHitResult OutHit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
     
 	FVector TargetLocation = TraceEnd;
 
-	if (GetWorld()->LineTraceMultiByObjectType(HitResults, TraceStart, TraceEnd, ECC_Visibility))
+	if (GetWorld()->SweepSingleByObjectType(OutHit, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, Params))
 	{
-		TargetLocation = HitResults[0].Location;
+		TargetLocation = OutHit.Location;
 	}
 	
 	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, TargetLocation);
@@ -160,7 +167,7 @@ void ASCharacter::FireProjectile(TSubclassOf<ASProjectile> Projectile)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParameters.Instigator = this;
 	
-	GetWorld()->SpawnActor<ASProjectile>(Projectile, SpawnTM, SpawnParameters); 
+	GetWorld()->SpawnActor<ASProjectileBase>(Projectile, SpawnTM, SpawnParameters); 
 }
 
 void ASCharacter::PrimaryInteract()
