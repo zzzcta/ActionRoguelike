@@ -18,20 +18,18 @@ public:
 	ASTargetDummy();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere)
 	USAttributeComponent* AttributeComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
+	
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	
+public:
+	void PostInitializeComponents() override;
+	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
-
+	
 };
