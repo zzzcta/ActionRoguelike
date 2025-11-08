@@ -23,11 +23,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
-	
 
-	
 public:
-	void PostInitializeComponents() override;
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);

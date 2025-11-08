@@ -17,9 +17,7 @@ public:
 	ASExplosiveBarrel();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
 	
@@ -35,7 +33,6 @@ protected:
 	const FHitResult& Hit);
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void PostInitializeComponents() override;
 
 };

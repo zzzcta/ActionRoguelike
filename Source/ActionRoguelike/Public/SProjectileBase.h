@@ -34,10 +34,12 @@ protected:
 	UParticleSystemComponent* ParticleComponent;
 	
 	UFUNCTION()
-	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
-
-	virtual void PostInitializeComponents() override;
+	
+public:
+	void PostInitializeComponents() override;
+	
 };

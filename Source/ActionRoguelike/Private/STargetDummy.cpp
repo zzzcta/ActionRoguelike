@@ -7,18 +7,12 @@
 // Sets default values
 ASTargetDummy::ASTargetDummy()
 {
-	
-	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
-
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
 	RootComponent = StaticMeshComponent;
-
-}
-
-void ASTargetDummy::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
+	
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASTargetDummy::OnHealthChanged);
+	
 }
 
 void ASTargetDummy::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
