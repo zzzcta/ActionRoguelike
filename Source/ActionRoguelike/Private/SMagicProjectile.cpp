@@ -3,6 +3,7 @@
 
 #include "SMagicProjectile.h"
 #include "SAttributeComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -10,6 +11,8 @@
 ASMagicProjectile::ASMagicProjectile()
 {
 	SphereComponent->SetSphereRadius(20.0f);
+	FlightSound = CreateDefaultSubobject<UAudioComponent>("FlightSound");
+	FlightSound->SetupAttachment(SphereComponent);
 }
 
 void ASMagicProjectile::PostInitializeComponents()
@@ -26,12 +29,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (OtherActor && OtherActor != GetInstigator())
 	{
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+		
 		if (AttributeComp)
 		{
 			// minus in front of DamageAmount to apply the change as damage, not healing
 			AttributeComp->ApplyHealthChange(-DamageAmount);
-
-			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 			
 			// Only explode when we hit something valid
 			Explode();
