@@ -15,6 +15,12 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	USceneComponent* MuzzleFlashSpawnPoint{nullptr};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UParticleSystem* MuzzleFlash{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DamageAmount{20.0f};
@@ -29,7 +35,8 @@ protected:
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
-	void PostInitializeComponents() override;
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	
 	ASMagicProjectile();
 

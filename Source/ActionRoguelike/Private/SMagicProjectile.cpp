@@ -5,6 +5,7 @@
 #include "SAttributeComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -13,6 +14,7 @@ ASMagicProjectile::ASMagicProjectile()
 	SphereComponent->SetSphereRadius(20.0f);
 	FlightSound = CreateDefaultSubobject<UAudioComponent>("FlightSound");
 	FlightSound->SetupAttachment(SphereComponent);
+	
 }
 
 void ASMagicProjectile::PostInitializeComponents()
@@ -21,6 +23,16 @@ void ASMagicProjectile::PostInitializeComponents()
 	if ensure(SphereComponent)
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+	}
+}
+
+void ASMagicProjectile::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if ensure(MuzzleFlash && MuzzleFlashSpawnPoint)
+	{
+		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MuzzleFlashSpawnPoint);
 	}
 }
 

@@ -20,7 +20,11 @@ public:
 protected:
 	// Called when the game starts
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float Health;
+	float Health{};
+	
+	// Called when the game starts
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float MaxHealth{100.0f};
 
 public:
 	UPROPERTY(BlueprintAssignable)

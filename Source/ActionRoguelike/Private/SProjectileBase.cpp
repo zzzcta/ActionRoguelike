@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "ProfilingDebugging/CookStats.h"
 
 // Sets default values
 ASProjectileBase::ASProjectileBase()
@@ -46,6 +47,7 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKill()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		//UGameplayStatics::PlayWorldCameraShake(GetWorld(), shake, GetInstigator()->GetActorLocation(), 1.0f, 10.0f);
 		ParticleComponent->DeactivateSystem();
 		ProjectileMovementComponent->StopMovementImmediately();
 		SetActorEnableCollision(false);

@@ -23,6 +23,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
 	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
+	TSubclassOf<class UCameraShakeBase> shake{};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	USphereComponent* SphereComponent;
