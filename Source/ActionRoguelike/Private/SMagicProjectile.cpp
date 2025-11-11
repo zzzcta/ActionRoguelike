@@ -24,15 +24,14 @@ void ASMagicProjectile::PostInitializeComponents()
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 	}
+
+	SpawnMuzzleFlash();
+	
 }
 
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	if ensure(MuzzleFlash)
-	{
-		//UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, , FName("Muzzle_01"), GetActorLocation(), GetActorRotation());
-	}
 }
 
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -40,7 +39,6 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (OtherActor && OtherActor != GetInstigator())
 	{
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		if (AttributeComp)
 		{
 			// minus in front of DamageAmount to apply the change as damage, not healing
@@ -52,6 +50,30 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	}
 }
 
+void ASMagicProjectile::SpawnMuzzleFlash() const
+{
+	ACharacter* InstigatorCharacter = Cast<ACharacter>(GetInstigator());
+
+	if ensure(InstigatorCharacter && MuzzleFlash)
+	{
+		UGameplayStatics::SpawnEmitterAttached(
+			MuzzleFlash, 
+			InstigatorCharacter->GetMesh(), 
+			FName("Muzzle_01"),           
+			FVector::ZeroVector,            
+			FRotator::ZeroRotator,         
+			EAttachLocation::SnapToTarget,  
+			true                           
+		);
+	}
+}
+
+void ASMagicProjectile::Explode_Implementation()
+{
+	Super::Explode_Implementation();
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	UGameplayStatics::PlayWorldCameraShake(GetWorld(), shake, GetInstigator()->GetActorLocation(), 1.0f, 10.0f);
+}
 
 
 

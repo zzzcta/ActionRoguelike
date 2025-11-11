@@ -34,6 +34,10 @@ protected:
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void SpawnMuzzleFlash() const;
+	virtual void Explode_Implementation() override;
+	
 public:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
