@@ -22,4 +22,14 @@ bool USAttributeComponent::ApplyHealthChange(float Delta)
 	return true;
 }
 
+float USAttributeComponent::GetHealth() const
+{
+	return Health;
+}
+
+float USAttributeComponent::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 

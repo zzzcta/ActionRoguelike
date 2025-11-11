@@ -29,10 +29,9 @@ void ASMagicProjectile::PostInitializeComponents()
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if ensure(MuzzleFlash && MuzzleFlashSpawnPoint)
+	if ensure(MuzzleFlash)
 	{
-		UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, MuzzleFlashSpawnPoint);
+		//UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, , FName("Muzzle_01"), GetActorLocation(), GetActorRotation());
 	}
 }
 
@@ -42,7 +41,6 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	{
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		
 		if (AttributeComp)
 		{
 			// minus in front of DamageAmount to apply the change as damage, not healing
@@ -53,6 +51,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		}
 	}
 }
+
 
 
 

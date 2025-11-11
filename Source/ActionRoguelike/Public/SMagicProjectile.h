@@ -17,7 +17,7 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
-	USceneComponent* MuzzleFlashSpawnPoint{nullptr};
+	USceneComponent* MuzzleFlashAttatchComponent{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UParticleSystem* MuzzleFlash{nullptr};
