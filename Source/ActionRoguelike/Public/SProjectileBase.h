@@ -22,10 +22,10 @@ public:
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
-	UParticleSystem* ImpactVFX;
+	UParticleSystem* ImpactVfx;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
-	TSubclassOf<UCameraShakeBase> shake{};
+	TSubclassOf<UCameraShakeBase> Shake{};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	USphereComponent* SphereComponent;
@@ -43,6 +43,6 @@ protected:
 	void Explode();
 	
 public:
-	void PostInitializeComponents() override;
+	virtual void PostInitializeComponents() override;
 	
 };

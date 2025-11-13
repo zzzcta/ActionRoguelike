@@ -52,7 +52,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void ASMagicProjectile::SpawnMuzzleFlash() const
 {
-	ACharacter* InstigatorCharacter = Cast<ACharacter>(GetInstigator());
+	const ACharacter* InstigatorCharacter = Cast<ACharacter>(GetInstigator());
 
 	if ensure(InstigatorCharacter && MuzzleFlash)
 	{
@@ -72,7 +72,7 @@ void ASMagicProjectile::Explode_Implementation()
 {
 	Super::Explode_Implementation();
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UGameplayStatics::PlayWorldCameraShake(GetWorld(), shake, GetInstigator()->GetActorLocation(), 1.0f, 10.0f);
+	UGameplayStatics::PlayWorldCameraShake(GetWorld(), Shake, GetActorLocation(), 1.0f, 100.0f);
 }
 
 

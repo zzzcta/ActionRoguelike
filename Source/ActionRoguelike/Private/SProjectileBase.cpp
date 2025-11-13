@@ -46,7 +46,7 @@ void ASProjectileBase::Explode_Implementation()
 	// Adding ensure to see if we encounter this situation at all
 	if (ensure(!IsPendingKill()))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
 		
 		ParticleComponent->DeactivateSystem();
 		ProjectileMovementComponent->StopMovementImmediately();
