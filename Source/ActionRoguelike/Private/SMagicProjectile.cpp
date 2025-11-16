@@ -34,6 +34,7 @@ void ASMagicProjectile::BeginPlay()
 	Super::BeginPlay();
 }
 
+
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor != GetInstigator())
@@ -53,7 +54,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 void ASMagicProjectile::SpawnMuzzleFlash() const
 {
 	const ACharacter* InstigatorCharacter = Cast<ACharacter>(GetInstigator());
-
+	
 	if ensure(InstigatorCharacter && MuzzleFlash)
 	{
 		UGameplayStatics::SpawnEmitterAttached(
@@ -72,7 +73,6 @@ void ASMagicProjectile::Explode_Implementation()
 {
 	Super::Explode_Implementation();
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UGameplayStatics::PlayWorldCameraShake(GetWorld(), Shake, GetActorLocation(), 1.0f, 100.0f);
 }
 
 

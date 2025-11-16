@@ -94,6 +94,8 @@ void ASCharacter::PostInitializeComponents()
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
 	float Delta)
 {
+	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
+	
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		APlayerController* PlayerController = Cast<APlayerController>(this->GetController());

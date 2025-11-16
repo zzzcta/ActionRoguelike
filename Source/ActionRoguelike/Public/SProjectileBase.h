@@ -9,6 +9,7 @@
 class UParticleSystemComponent;
 class UProjectileMovementComponent;
 class USphereComponent;
+class UCameraShakeBase;
 
 UCLASS(Abstract)
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
@@ -21,11 +22,17 @@ public:
 
 protected:
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
+	TSubclassOf<UCameraShakeBase> ImpactCameraShake;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
+	float ImpactShakeInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
+	float ImpactShakeOuterRadius;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
 	UParticleSystem* ImpactVfx;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "VFX")
-	TSubclassOf<UCameraShakeBase> Shake{};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	USphereComponent* SphereComponent;
@@ -36,6 +43,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	UParticleSystemComponent* ParticleComponent;
 	
+
+
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	

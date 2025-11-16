@@ -25,6 +25,8 @@ ASProjectileBase::ASProjectileBase()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 	ProjectileMovementComponent->InitialSpeed = 1000.0f;
 	
+	ImpactShakeInnerRadius = 250.0f;
+	ImpactShakeOuterRadius = 2500.0f;
 }
 
 void ASProjectileBase::PostInitializeComponents()
@@ -39,7 +41,6 @@ void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 	Explode();
 }
 
-// _Implementation from it being marked as BlueprintNativeEvent
 void ASProjectileBase::Explode_Implementation()
 {
 	// Check to make sure we aren't already being 'destroyed'
@@ -47,6 +48,13 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKill()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::PlayWorldCameraShake(
+			this, 
+			ImpactCameraShake, 
+			GetActorLocation(), 
+			ImpactShakeInnerRadius, 
+			ImpactShakeOuterRadius
+			);
 		
 		ParticleComponent->DeactivateSystem();
 		ProjectileMovementComponent->StopMovementImmediately();
