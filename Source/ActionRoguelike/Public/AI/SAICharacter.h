@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class USAttributeComponent;
 class UPawnSensingComponent;
 
 UCLASS()
@@ -18,13 +19,17 @@ public:
 	ASAICharacter();
 
 protected:
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 	
 	virtual void PostInitializeComponents() override;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent{nullptr};
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Components")
+	USAttributeComponent* AttributeComponent{nullptr};
+	
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
-	
 	
 };

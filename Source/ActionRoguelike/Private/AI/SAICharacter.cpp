@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -12,7 +13,26 @@
 ASAICharacter::ASAICharacter()
 {
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
+	
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 
+}
+
+void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
+	float Delta)
+{
+	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC)
+	{
+		if (NewHealth <= OwningComp->GetMaxHealth() * 0.15)
+		{
+			AIC->GetBlackboardComponent()->SetValueAsBool("IsOnLowHealth", true);
+		} else
+		{
+			AIC->GetBlackboardComponent()->SetValueAsBool("IsOnLowHealth", false);
+		}
+	}
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -20,6 +40,8 @@ void ASAICharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	
 	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+	
+	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
