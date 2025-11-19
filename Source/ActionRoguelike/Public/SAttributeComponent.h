@@ -42,5 +42,5 @@ public:
 	// Getter para obtener el valor de la salud máxima.
 	UFUNCTION(BlueprintPure, Category = "Attributes")
 	float GetMaxHealth() const;
-	
+	bool IsFullHealth() const;
 };
