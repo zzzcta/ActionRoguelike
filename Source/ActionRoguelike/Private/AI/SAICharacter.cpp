@@ -2,7 +2,6 @@
 
 
 #include "AI/SAICharacter.h"
-
 #include "AIController.h"
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
@@ -15,6 +14,8 @@ ASAICharacter::ASAICharacter()
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
 	
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
+	
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 }
 

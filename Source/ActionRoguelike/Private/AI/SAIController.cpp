@@ -9,7 +9,7 @@ void ASAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (ensureMsgf(BehaviourTree, TEXT("BehaviourTree is nullptr")))
+	if (ensureMsgf(BehaviourTree, TEXT("BehaviourTree is nullptr")))	
 	{
 		RunBehaviorTree(BehaviourTree);
 	}
