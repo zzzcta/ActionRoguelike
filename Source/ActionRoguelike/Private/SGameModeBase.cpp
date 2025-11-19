@@ -39,7 +39,7 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 	{
 		ASAICharacter* Bot = *It;
 
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributeComponent(Bot);
 		if (ensure(AttributeComp) && AttributeComp->IsAlive())
 		{
 			NrOfAliveBots++;

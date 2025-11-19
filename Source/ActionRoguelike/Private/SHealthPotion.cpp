@@ -29,7 +29,7 @@ void ASHealthPotion::OnPickUp_Implementation(APawn* PickUpInstigator)
 	
 	if ensure(AttributeComp)
 	{
-		AttributeComp->ApplyHealthChange(HealthAmount);
+		AttributeComp->ApplyHealthChange(this, HealthAmount);
 	}
 }
 

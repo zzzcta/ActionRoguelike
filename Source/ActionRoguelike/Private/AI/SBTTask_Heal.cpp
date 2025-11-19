@@ -19,7 +19,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 			USAttributeComponent* MyCharacterAttributeComp = Cast<USAttributeComponent>(MyCharacter->GetComponentByClass(USAttributeComponent::StaticClass()));
 			if (MyCharacterAttributeComp)
 			{
-				MyCharacterAttributeComp->ApplyHealthChange(MyCharacterAttributeComp->GetMaxHealth());
+				MyCharacterAttributeComp->ApplyHealthChange(nullptr, MyCharacterAttributeComp->GetMaxHealth());
 				DrawDebugString(GetWorld(), MyCharacter->GetActorLocation(), "Curita pls");
 				return EBTNodeResult::Succeeded;
 			}

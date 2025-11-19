@@ -21,4 +21,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TSubclassOf<ASProjectileBase> Projectile;
 	
+	UPROPERTY(EditAnywhere, Category = "AI")
+	float MaxBulletSpreed{2.0f};
+	
 };

@@ -30,6 +30,9 @@ protected:
 	USAttributeComponent* AttributeComponent{nullptr};
 	
 	UFUNCTION()
+	void SetTargetActor(AActor* TargetActor);
+	
+	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 	
 };
