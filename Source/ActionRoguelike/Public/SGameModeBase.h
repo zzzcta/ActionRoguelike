@@ -42,6 +42,9 @@ protected:
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 	
+	UFUNCTION(Exec)
+	void KillMinions();
+	
 	FTimerHandle TimerHandle_SpawnBot;
 	
 };

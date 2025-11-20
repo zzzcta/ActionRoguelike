@@ -34,6 +34,8 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;
 }
 
+
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -194,3 +196,7 @@ void ASCharacter::PrimaryInteract()
 	InteractionComponent->PrimaryInteract();
 }
 
+void ASCharacter::SelfHealth(float HealthAmount)
+{
+	AttributeComponent->ApplyHealthChange(this, HealthAmount);
+}

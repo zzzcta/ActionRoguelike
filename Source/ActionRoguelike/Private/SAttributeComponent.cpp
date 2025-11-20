@@ -10,6 +10,10 @@ USAttributeComponent::USAttributeComponent()
 }
 
 
+bool USAttributeComponent::Kill()
+{
+	return ApplyHealthChange(nullptr, -GetMaxHealth());
+}
 
 bool USAttributeComponent::IsAlive() const
 {
@@ -31,8 +35,13 @@ bool USAttributeComponent::IsFullHealth() const
 	return Health == MaxHealth;
 }
 
-bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor ,float Delta)
+bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
+	if (!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+	
 	float OldHealth = Health;
 	
 	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);

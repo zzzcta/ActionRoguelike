@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USAttributeComponent* AttributeComponent;
 	
+	UFUNCTION(Exec)
+	void SelfHealth(float HealthAmount = 100.0f);
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

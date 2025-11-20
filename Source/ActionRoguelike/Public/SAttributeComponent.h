@@ -24,11 +24,9 @@ public:
 	static bool IsActorAlive(AActor* Actor);
 	
 protected:
-	// Called when the game starts
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health{};
 	
-	// Called when the game starts
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float MaxHealth{100.0f};
 
@@ -44,7 +42,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Attributes")
 	float GetHealth() const;
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool Kill();
+	
 	// Getter para obtener el valor de la salud máxima.
 	UFUNCTION(BlueprintPure, Category = "Attributes")
 	float GetMaxHealth() const;
