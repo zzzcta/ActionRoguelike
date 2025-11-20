@@ -6,9 +6,10 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class USWorldUserWidget;
 class USAttributeComponent;
 class UPawnSensingComponent;
-
+class UUserWidget;
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 {
@@ -19,20 +20,29 @@ public:
 	ASAICharacter();
 
 protected:
-	UFUNCTION()
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
-	
-	virtual void PostInitializeComponents() override;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Components")
 	USAttributeComponent* AttributeComponent{nullptr};
 	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	USWorldUserWidget* ActiveHealthBarWidget{};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass{};
+	
 	UFUNCTION()
 	void SetTargetActor(AActor* TargetActor);
 	
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
+	
+
 	
 };
