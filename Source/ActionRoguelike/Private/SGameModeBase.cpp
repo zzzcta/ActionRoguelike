@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
@@ -14,6 +15,8 @@ void ASGameModeBase::StartPlay()
 	
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBot, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
+
+
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
@@ -39,6 +42,9 @@ void ASGameModeBase::KillMinions()
 		}
 	}
 }
+
+
+
 
 void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
@@ -85,4 +91,27 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 	
 	GetWorld()->SpawnActor<AActor>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
 	
+}
+
+void ASGameModeBase::OnActorKilled(AActor* ActorKilled, AActor* ActorKiller)
+{
+	ASCharacter* Player = Cast<ASCharacter>(ActorKilled);
+	if (Player)
+	{
+		FTimerHandle TimerHandle_RespawnDelay;
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, FName("RespawnPlayerElapsed"), Player->GetController());
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, 2.0f, false);
+	}
+
+}
+
+void ASGameModeBase::RespawnPlayerElapsed(AController* PlayerController)
+{
+	if (ensure(PlayerController))
+	{
+		PlayerController->UnPossess();
+		
+		RestartPlayer(PlayerController);
+	}
 }

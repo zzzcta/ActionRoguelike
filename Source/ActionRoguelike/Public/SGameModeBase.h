@@ -45,6 +45,12 @@ protected:
 	UFUNCTION(Exec)
 	void KillMinions();
 	
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* PlayerController);
+	
 	FTimerHandle TimerHandle_SpawnBot;
+	
+public:
+	virtual void OnActorKilled(AActor* ActorKilled, AActor* ActorKiller);
 	
 };
