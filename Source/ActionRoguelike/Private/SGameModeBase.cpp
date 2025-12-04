@@ -44,8 +44,6 @@ void ASGameModeBase::KillMinions()
 }
 
 
-
-
 void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (QueryStatus != EEnvQueryStatus::Success)
