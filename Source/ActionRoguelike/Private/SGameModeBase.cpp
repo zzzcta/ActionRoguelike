@@ -9,14 +9,13 @@
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 	
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBot, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
-
-
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
@@ -49,6 +48,12 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 	if (QueryStatus != EEnvQueryStatus::Success)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed Query"));
+		return;
+	}
+	
+	if (!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnBots is disabled."));
 		return;
 	}
 	

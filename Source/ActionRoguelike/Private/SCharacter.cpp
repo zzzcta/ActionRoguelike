@@ -196,6 +196,11 @@ void ASCharacter::PrimaryInteract()
 	InteractionComponent->PrimaryInteract();
 }
 
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CamaraComp->GetComponentLocation();
+}
+
 void ASCharacter::SelfHealth(float HealthAmount)
 {
 	AttributeComponent->ApplyHealthChange(this, HealthAmount);

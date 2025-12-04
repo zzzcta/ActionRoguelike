@@ -8,6 +8,8 @@
 #include "SAttributeComponent.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -18,6 +20,9 @@ ASAICharacter::ASAICharacter()
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 	
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 }
 
@@ -79,6 +84,8 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 				GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 				GetMesh()->SetAllBodiesSimulatePhysics(true);
 				
+				GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				GetCharacterMovement()->Deactivate();
 				SetLifeSpan(5.0f);
 			}
 		}	

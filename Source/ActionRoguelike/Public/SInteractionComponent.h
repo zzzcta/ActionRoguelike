@@ -13,15 +13,10 @@ class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 	GENERATED_BODY()
 	
 public:
-	void PrimaryInteract();
 	USInteractionComponent();
 
 protected:
-	// Called when the game starts
-	void BeginPlay() override;
-
-public:	
-	// Called every frame
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
+public:	
+	void PrimaryInteract();
 };
