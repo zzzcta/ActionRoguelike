@@ -10,9 +10,7 @@
 #include "DrawDebugHelpers.h"
 #include "SActionComponent.h"
 #include "SAttributeComponent.h"
-#include "SProjectileBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 static TAutoConsoleVariable<bool> CVarDebugInteraction(TEXT("su.PlayerDebugInteraction"), false, TEXT("Enable Player debug interaction."), ECVF_Cheat);
 
@@ -39,8 +37,6 @@ ASCharacter::ASCharacter()
 	
 	bUseControllerRotationYaw = false;
 }
-
-
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
@@ -91,7 +87,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::SprintStop);
 
 	// Combat
-	PlayerInputComponent->BindAction("MagicAttack", IE_Pressed, this, &ASCharacter::MagicAttack);
+	PlayerInputComponent->BindAction("MagicAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
 	PlayerInputComponent->BindAction("DashAbility", IE_Pressed, this, &ASCharacter::DashAbility);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed ,this, &ASCharacter::PrimaryInteract);
@@ -102,7 +98,6 @@ void ASCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
-	
 }
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
@@ -148,70 +143,19 @@ void ASCharacter::SprintStop()
 	ActionComponent->StopActionByName(this, FName("Sprint"));
 }
 
-void ASCharacter::MagicAttack()
+void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(MagicAttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
-		FireProjectile(MagicProjectile);
-	}, 0.2f, false);
+	ActionComponent->StartActionByName(this, "PrimaryAttack");
 }
 
 void ASCharacter::BlackHoleAttack()
 {
-	PlayAnimMontage(BlackHoleAttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
-		FireProjectile(BlackHoleProjectile);
-	}, 0.2f, false);
+	ActionComponent->StartActionByName(this, "BlackHole");
 }
 
 void ASCharacter::DashAbility()
 {
-	PlayAnimMontage(MagicAttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, [this](){
-		FireProjectile(DashProjectile);
-	}, 0.2f, false);
-}
-
-void ASCharacter::FireProjectile(TSubclassOf<ASProjectileBase> Projectile)
-{
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-    
-	FVector CameraLocation = CamaraComp->GetComponentLocation();
-	FRotator CameraRotation = CamaraComp->GetComponentRotation();
-    
-	FVector TraceStart = CameraLocation;
-	FVector TraceEnd = TraceStart + CameraRotation.Vector() * 5000.0f;
-
-	FCollisionShape CollisionShape;
-	CollisionShape.SetSphere(20.f);
-	
-	FHitResult OutHit;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-    
-	FVector TargetLocation = TraceEnd;
-
-	if (GetWorld()->SweepSingleByObjectType(OutHit, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, CollisionShape, Params))
-	{
-		TargetLocation = OutHit.Location;
-	}
-	
-	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, TargetLocation);
-	
-	FTransform SpawnTM = FTransform(SpawnRotator, HandLocation);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParameters.Instigator = this;
-	
-	GetWorld()->SpawnActor<ASProjectileBase>(Projectile, SpawnTM, SpawnParameters); 
+	ActionComponent->StartActionByName(this, "Dash");
 }
 
 void ASCharacter::PrimaryInteract()

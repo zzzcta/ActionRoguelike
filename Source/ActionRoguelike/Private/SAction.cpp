@@ -3,6 +3,8 @@
 
 #include "SAction.h"
 
+#include "SActionComponent.h"
+
 void USAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("StartAction: %s"), *GetNameSafe(this));
@@ -11,4 +13,16 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 void USAction::StopAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("StopAction: %s"), *GetNameSafe(this));
+}
+
+UWorld* USAction::GetWorld() const
+{
+	USActionComponent* Comp = Cast<USActionComponent>(GetOuter());
+
+	if (Comp)
+	{
+		return Comp->GetWorld();
+	}
+	
+	return nullptr;
 }

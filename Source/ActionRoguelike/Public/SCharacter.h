@@ -19,24 +19,6 @@ UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
 	GENERATED_BODY()
-protected:
-	
-	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectileBase> MagicProjectile;
-
-	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectileBase> BlackHoleProjectile;
-
-	UPROPERTY(EditAnywhere, Category = "Combat|Projectiles")
-	TSubclassOf<ASProjectileBase> DashProjectile;
-
-	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
-	UAnimMontage* MagicAttackAnim;
-
-	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
-	UAnimMontage* BlackHoleAttackAnim;
-
-	FTimerHandle TimerHandle_PrimaryAttack;
 	
 public:
 	// Sets default values for this character's properties
@@ -68,10 +50,9 @@ protected:
 	void MoveRight(float value);
 	void SprintStart();
 	void SprintStop();
-	void MagicAttack();
+	void PrimaryAttack();
 	void BlackHoleAttack();
 	void DashAbility();
-	void FireProjectile(TSubclassOf<ASProjectileBase> Projectile);
 	void PrimaryInteract();
 	
 	virtual FVector GetPawnViewLocation() const override;

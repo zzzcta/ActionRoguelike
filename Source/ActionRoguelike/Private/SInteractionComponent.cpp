@@ -29,7 +29,7 @@ void USInteractionComponent::PrimaryInteract()
 	AActor* MyOwner = GetOwner();
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
-	FVector End = EyeLocation + EyeRotation.Vector() * 250;
+	FVector End = EyeLocation + EyeRotation.Vector() * 500;
 
 	float Radius = 30.0f;
 	FCollisionShape Sphere;
