@@ -8,10 +8,13 @@
 
 // This include is added at the top of your SCharacter.cpp file
 #include "DrawDebugHelpers.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SProjectileBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+
+static TAutoConsoleVariable<bool> CVarDebugInteraction(TEXT("su.PlayerDebugInteraction"), false, TEXT("Enable Player debug interaction."), ECVF_Cheat);
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -27,8 +30,11 @@ ASCharacter::ASCharacter()
 	CamaraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
+	
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
-
+	
+	ActionComponent = CreateDefaultSubobject<USActionComponent>("ActionComponent");
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	
 	bUseControllerRotationYaw = false;
@@ -47,7 +53,12 @@ void ASCharacter::BeginPlay()
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	if (!CVarDebugInteraction.GetValueOnGameThread())
+	{
+		return;
+	}
+	
 	// -- Rotation Visualization -- //
 	const float DrawScale = 100.0f;
 	const float Thickness = 5.0f;
@@ -76,6 +87,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed ,this, &ASCharacter::Jump);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::SprintStop);
 
 	// Combat
 	PlayerInputComponent->BindAction("MagicAttack", IE_Pressed, this, &ASCharacter::MagicAttack);
@@ -123,6 +136,16 @@ void ASCharacter::MoveRight(float value)
 	FVector RightVector = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::Y);
 	
 	AddMovementInput(RightVector, value);
+}
+
+void ASCharacter::SprintStart()
+{
+	ActionComponent->StartActionByName(this, FName("Sprint"));
+}
+
+void ASCharacter::SprintStop()
+{
+	ActionComponent->StopActionByName(this, FName("Sprint"));
 }
 
 void ASCharacter::MagicAttack()

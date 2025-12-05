@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USActionComponent;
 class USAttributeComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -54,6 +55,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USAttributeComponent* AttributeComponent;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USActionComponent* ActionComponent;
+	
 	UFUNCTION(Exec)
 	void SelfHealth(float HealthAmount = 100.0f);
 	
@@ -62,6 +66,8 @@ protected:
 
 	void MoveForward(float value);
 	void MoveRight(float value);
+	void SprintStart();
+	void SprintStop();
 	void MagicAttack();
 	void BlackHoleAttack();
 	void DashAbility();
