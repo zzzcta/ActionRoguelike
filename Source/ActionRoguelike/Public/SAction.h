@@ -25,15 +25,22 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Tags")
 	USActionComponent* GetOwningComponent() const;
 	
+	bool bIsRunning;
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Action")
+	bool CanStartAction(AActor* Instigator);
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StartAction(AActor* Instigator);
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StopAction(AActor* Instigator);
+	
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	bool IsRunning() const;
 	
 	virtual UWorld* GetWorld() const override;
 };
