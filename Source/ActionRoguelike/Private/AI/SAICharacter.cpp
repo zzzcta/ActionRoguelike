@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "DrawDebugHelpers.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -18,6 +19,8 @@ ASAICharacter::ASAICharacter()
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
 	
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
+	
+	ActionComponent = CreateDefaultSubobject<USActionComponent>("ActionComponent");
 	
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
