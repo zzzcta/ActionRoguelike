@@ -11,13 +11,13 @@ class USWorldUserWidget;
 class USAttributeComponent;
 class UPawnSensingComponent;
 class UUserWidget;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ASAICharacter();
 
 protected:
@@ -35,6 +35,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass{};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Coins")
+	int32 CoinsToEarn{0};
 	
 	UFUNCTION()
 	void SetTargetActor(AActor* TargetActor);

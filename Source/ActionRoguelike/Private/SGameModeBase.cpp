@@ -1,20 +1,38 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SGameModeBase.h"
-
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SPickUpBase.h"
+#include "SPlayerState.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
+
 void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 	
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBot, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
+
+	UEnvQueryInstanceBlueprintWrapper* ItemSpawnQuery = UEnvQueryManager::RunEQSQuery(this, ItemsSpawnQuery, this, EEnvQueryRunMode::AllMatching, nullptr);
+	if (ensure(ItemSpawnQuery))
+	{
+		ItemSpawnQuery->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::OnItemSpawnQueryFinished);
+	}
+}
+
+void ASGameModeBase::OnBotKilled(AActor* Killer, ASAICharacter* BotKilled, const int32 CoinsToEarn)
+{
+	const ASCharacter* Player = Cast<ASCharacter>(Killer);
+	if (Player)
+	{
+		ASPlayerState* PlayerState = Cast<ASPlayerState>(Player->GetPlayerState());
+		if (ensure(PlayerState))
+		{
+			PlayerState->AddCredits(CoinsToEarn);
+		}
+	}
 }
 
 void ASGameModeBase::SpawnBotTimerElapsed()
@@ -29,7 +47,6 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 
 void ASGameModeBase::KillMinions()
 {
-	int32 NrOfAliveBots = 0;
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
 		ASAICharacter* Bot = *It;
@@ -42,6 +59,15 @@ void ASGameModeBase::KillMinions()
 	}
 }
 
+TSubclassOf<ASPickUpBase> ASGameModeBase::GetRandomItemClass() const
+{
+	if (ItemsToSpawn.Num() == 0)
+	{
+		return nullptr;
+	}
+	
+	return ItemsToSpawn[FMath::RandRange(0, ItemsToSpawn.Num() - 1)];
+}
 
 void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
@@ -94,6 +120,31 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 	
 	GetWorld()->SpawnActor<AActor>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
 	
+}
+
+void ASGameModeBase::OnItemSpawnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
+	EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed Query"));
+		return;
+	}
+	
+	TArray<FVector> SpawnLocations{};
+	QueryInstance->GetQueryResultsAsLocations(SpawnLocations);
+	
+	if (SpawnLocations.Num() == 0)
+	{
+		return;
+	}
+
+	for (int i = 0; i <= MaxItemsToSpawn; ++i)
+	{
+		int32 RandomIndex = FMath::RandRange(0, SpawnLocations.Num() - 1);
+		GetWorld()->SpawnActor<AActor>(GetRandomItemClass(), SpawnLocations[RandomIndex], FRotator::ZeroRotator);
+		SpawnLocations.RemoveAt(RandomIndex);
+	}
 }
 
 void ASGameModeBase::OnActorKilled(AActor* ActorKilled, AActor* ActorKiller)

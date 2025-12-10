@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SHealthPotion.h"
-
 #include "SAttributeComponent.h"
+#include "SPlayerState.h"
 
 void ASHealthPotion::Interact_Implementation(APawn* PickUpInstigator)
 {
@@ -16,7 +13,13 @@ void ASHealthPotion::Interact_Implementation(APawn* PickUpInstigator)
 		bCanHeal = AttributeComp->GetHealth() + HealthAmount < AttributeComp->GetMaxHealth();
 	}
 	
-	if (bIsActive && bCanHeal)
+	ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState());
+	if (ensure(PlayerState))
+	{
+		bCanBuy = PlayerState->GetCredits() >= CoinsPrice;
+	}
+	
+	if (bIsActive && bCanHeal && bCanBuy)
 	{
 		OnPickUp(PickUpInstigator);
 		bIsActive = false;
@@ -26,6 +29,12 @@ void ASHealthPotion::Interact_Implementation(APawn* PickUpInstigator)
 void ASHealthPotion::OnPickUp_Implementation(APawn* PickUpInstigator)
 {
 	Super::OnPickUp_Implementation(PickUpInstigator);
+	
+	ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState());
+	if (PlayerState)
+	{
+		PlayerState->SubtractCredits(CoinsPrice);
+	}
 	
 	if ensure(AttributeComp)
 	{

@@ -7,10 +7,12 @@
 #include "DrawDebugHelpers.h"
 #include "SActionComponent.h"
 #include "SAttributeComponent.h"
+#include "SGameModeBase.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/GameModeBase.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -80,9 +82,16 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			AAIController* AIC = Cast<AAIController>(GetController());
 			AIC->GetBlackboardComponent()->SetValueAsBool("IsOnLowHealth", bIsLowHealth);
 			
-			if (NewHealth <= 0.f)
+			// Bot Died
+			if (NewHealth <= 0.0f)
 			{
 				AIC->GetBrainComponent()->StopLogic("Killed");
+				
+				ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+				if (GM)
+				{
+					GM->OnBotKilled(InstigatorActor, this, CoinsToEarn);		
+				}
 				
 				GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 				GetMesh()->SetAllBodiesSimulatePhysics(true);

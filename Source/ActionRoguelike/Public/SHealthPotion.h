@@ -16,11 +16,8 @@ class ACTIONROGUELIKE_API ASHealthPotion : public ASPickUpBase
 	GENERATED_BODY()
 
 protected:
-	virtual void OnPickUp_Implementation(APawn* PickUpInstigator) override;
-	virtual void Interact_Implementation(APawn* PickUpInstigator) override;
-
 	UPROPERTY()
-	USAttributeComponent* AttributeComp{nullptr};
+	USAttributeComponent* AttributeComp{};
 
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float HealthAmount{10.0f};
@@ -28,4 +25,12 @@ protected:
 	UPROPERTY()
 	bool bCanHeal;
 	
+	UPROPERTY()
+	bool bCanBuy;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Coins")
+	int32 CoinsPrice{};
+	
+	virtual void OnPickUp_Implementation(APawn* PickUpInstigator) override;
+	virtual void Interact_Implementation(APawn* PickUpInstigator) override;
 };

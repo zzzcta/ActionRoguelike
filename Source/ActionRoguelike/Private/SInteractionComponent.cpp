@@ -8,11 +8,6 @@
 
 static TAutoConsoleVariable<bool> CVarDebugInteraction(TEXT("su.DebugInteraction"), false, TEXT("Enable debug interaction."), ECVF_Cheat);
 
-// Sets default values for this component's properties
-USInteractionComponent::USInteractionComponent()
-{
-}
-
 void USInteractionComponent::PrimaryInteract()
 {
 	bool bDebugInteraction = CVarDebugInteraction.GetValueOnGameThread();

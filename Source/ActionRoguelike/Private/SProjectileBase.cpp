@@ -23,7 +23,7 @@ ASProjectileBase::ASProjectileBase()
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bInitialVelocityInLocalSpace = true;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
-	ProjectileMovementComponent->InitialSpeed = 1000.0f;
+	ProjectileMovementComponent->InitialSpeed = 2500.0f;
 	
 	ImpactShakeInnerRadius = 250.0f;
 	ImpactShakeOuterRadius = 2500.0f;
