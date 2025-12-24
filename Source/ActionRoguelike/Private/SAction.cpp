@@ -10,8 +10,8 @@ bool USAction::CanStartAction_Implementation(AActor* Instigator)
 	{
 		return false;
 	}
-	
-	USActionComponent* Comp = GetOwningComponent();
+
+	const USActionComponent* Comp = GetOwningComponent();
 	
 	if (Comp->ActiveGameplayTags.HasAny(BlockedTags))
 	{
@@ -19,6 +19,7 @@ bool USAction::CanStartAction_Implementation(AActor* Instigator)
 	}
 	return true;
 }
+
 void USAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("StartAction: %s"), *GetNameSafe(this));
@@ -43,9 +44,7 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 
 UWorld* USAction::GetWorld() const
 {
-	USActionComponent* Comp = Cast<USActionComponent>(GetOuter());
-	
-	if (Comp)
+	if (const USActionComponent* Comp = Cast<USActionComponent>(GetOuter()))
 	{
 		return Comp->GetWorld();
 	}
@@ -57,8 +56,6 @@ USActionComponent* USAction::GetOwningComponent() const
 {
 	return Cast<USActionComponent>(GetOuter());
 }
-
-
 
 bool USAction::IsRunning() const
 {

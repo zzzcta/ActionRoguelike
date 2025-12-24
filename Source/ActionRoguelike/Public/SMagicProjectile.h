@@ -18,10 +18,13 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
-	USceneComponent* MuzzleFlashAttatchComponent{nullptr};
+	USceneComponent* MuzzleFlashAttachComponent{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	UParticleSystem* MuzzleFlash{nullptr};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<USActionEffect> BurningActionClass{};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DamageAmount{20.0f};
