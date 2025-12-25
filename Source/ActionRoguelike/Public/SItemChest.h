@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "SItemChest.generated.h"
 
+
 UCLASS()
 class ACTIONROGUELIKE_API ASItemChest : public AActor, public ISGameplayInterface
 {
@@ -22,7 +23,14 @@ public:
 	float TargetPitch;
 
 protected:
-
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened")
+	bool bIsLidOpened;
+	
+	UFUNCTION()
+	void OnRep_LidOpened();
+	
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BaseMesh;
 

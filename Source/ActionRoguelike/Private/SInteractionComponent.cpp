@@ -14,8 +14,13 @@ void USInteractionComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
                                            FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	const APawn* MyPawn = Cast<APawn>(GetOwner());
 	
-	FindInteractable();
+	if (MyPawn->IsLocallyControlled())
+	{
+		FindInteractable();
+	}
 }
 
 void USInteractionComponent::FindInteractable()
@@ -94,14 +99,20 @@ void USInteractionComponent::FindInteractable()
 	}
 }
 
-
 void USInteractionComponent::PrimaryInteract()
 {
-	if (FocusedActor)
-	{
-		APawn* Instigator = Cast<APawn>(GetOwner());
-		ISGameplayInterface::Execute_Interact(FocusedActor, Instigator);
-	}
+	ServerInteract(FocusedActor);
 }
 
-
+void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (InFocus == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("No FocusedActor"));
+		return;
+	}
+	
+	APawn* Instigator = Cast<APawn>(GetOwner());
+	ISGameplayInterface::Execute_Interact(InFocus, Instigator);
+	
+}
