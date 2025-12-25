@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionClassName);
 	
+	UFUNCTION(Server, Reliable)
+	void ServerStartActionByName(AActor* Instigator, FName ActionClassName);
+	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActionsClasses;
