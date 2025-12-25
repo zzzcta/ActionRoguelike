@@ -7,7 +7,9 @@ ASPickUpBase::ASPickUpBase()
 {
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	RootComponent = BaseMesh;
+	bReplicates = true;
 }
+
 
 void ASPickUpBase::Interact_Implementation(APawn* PickUpInstigator)
 {

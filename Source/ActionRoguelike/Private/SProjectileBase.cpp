@@ -6,7 +6,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "ProfilingDebugging/CookStats.h"
 
 // Sets default values
 ASProjectileBase::ASProjectileBase()
@@ -27,6 +26,8 @@ ASProjectileBase::ASProjectileBase()
 	
 	ImpactShakeInnerRadius = 250.0f;
 	ImpactShakeOuterRadius = 2500.0f;
+	
+	bReplicates = true;
 }
 
 void ASProjectileBase::PostInitializeComponents()

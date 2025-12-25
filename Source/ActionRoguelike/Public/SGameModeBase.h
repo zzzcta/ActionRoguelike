@@ -6,7 +6,6 @@
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "GameFramework/GameModeBase.h"
-#include "Serialization/ArrayReader.h"
 #include "SGameModeBase.generated.h"
 
 class ASPickUpBase;
