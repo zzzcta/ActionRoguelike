@@ -8,7 +8,7 @@ USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 }
 
 void USActionComponent::BeginPlay()
@@ -19,7 +19,6 @@ void USActionComponent::BeginPlay()
 	{
 		AddAction(GetOwner(), ActionClass);
 	}
-	
 }
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -100,6 +99,19 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionClassNa
 	}
 	return false;
 }
+
+float USActionComponent::GetActionRageCost(const FName ActionClassName)
+{
+	for (const USAction* Action : Actions)
+	{
+		if (Action && Action->ActionName == ActionClassName)
+		{
+			return Action->RageCost;
+		}
+	}
+	return 0.0f;
+}
+
 
 void USActionComponent::ServerStartActionByName_Implementation(AActor* Instigator, FName ActionClassName)
 {

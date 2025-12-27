@@ -32,8 +32,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionClassName);
 	
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	float GetActionRageCost(FName ActionClassName);
+	
 	UFUNCTION(Server, Reliable)
 	void ServerStartActionByName(AActor* Instigator, FName ActionClassName);
+
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")

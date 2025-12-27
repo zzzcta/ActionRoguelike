@@ -150,7 +150,11 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::BlackHoleAttack()
 {
-	ActionComponent->StartActionByName(this, "BlackHole");
+	if (AttributeComponent->GetRage() >= ActionComponent->GetActionRageCost("BlackHole"))
+	{
+		ActionComponent->StartActionByName(this, "BlackHole");
+		AttributeComponent->ApplyRageChange(-ActionComponent->GetActionRageCost("BlackHole"));
+	}
 }
 
 void ASCharacter::DashAbility()
@@ -168,7 +172,8 @@ FVector ASCharacter::GetPawnViewLocation() const
 	return CamaraComp->GetComponentLocation();
 }
 
-void ASCharacter::SelfHealth(float HealthAmount)
+void ASCharacter::SelfHealth(const float HealthAmount)
 {
 	AttributeComponent->ApplyHealthChange(this, HealthAmount);
 }
+

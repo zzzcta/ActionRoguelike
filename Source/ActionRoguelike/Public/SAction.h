@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	float RageCost{};
+	
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	bool CanStartAction(AActor* Instigator);
 	

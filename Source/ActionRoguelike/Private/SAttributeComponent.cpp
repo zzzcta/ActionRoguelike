@@ -1,20 +1,32 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SAttributeComponent.h"
-
 #include "SGameModeBase.h"
 
-// Sets default values for this component's properties
 USAttributeComponent::USAttributeComponent()
 {
 	Health = MaxHealth;
 }
 
-
 bool USAttributeComponent::Kill()
 {
 	return ApplyHealthChange(nullptr, -GetMaxHealth());
+}
+
+float USAttributeComponent::GetRage()
+{
+	return CurrentRage;
+}
+
+float USAttributeComponent::GetMaxRage()
+{
+	return MaxHealth;
+}
+
+void USAttributeComponent::ApplyRageChange(const float RageAmount)
+{
+	const float OldRage = CurrentRage;
+	CurrentRage = FMath::Clamp(CurrentRage + RageAmount , 0.0f, MaxRage);
+	const float ActualDelta = CurrentRage - OldRage;
+	OnRageChanged.Broadcast(this, CurrentRage, ActualDelta);
 }
 
 bool USAttributeComponent::IsAlive() const
@@ -44,21 +56,22 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		return false;
 	}
 	
-	float OldHealth = Health;
+	ApplyRageChange(-Delta);
+	
+	const float OldHealth = Health;
 	
 	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
-	
-	float ActualDelta = Health - OldHealth;
+
+	const float ActualDelta = Health - OldHealth;
 	
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 	
 	// If actor died
 	if (Health <= 0.0f && ActualDelta < 0.0f)
 	{
-		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		if (GM)
+		if (ASGameModeBase* Gm = GetWorld()->GetAuthGameMode<ASGameModeBase>())
 		{
-			GM->OnActorKilled(GetOwner(), InstigatorActor);
+			Gm->OnActorKilled(GetOwner(), InstigatorActor);
 		}
 	}
 	
@@ -77,9 +90,7 @@ USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* FromAc
 
 bool USAttributeComponent::IsActorAlive(AActor* Actor)
 {
-	USAttributeComponent* AttributeComp = GetAttributeComponent(Actor);
-	
-	if (AttributeComp)
+	if (const USAttributeComponent* AttributeComp = GetAttributeComponent(Actor))
 	{
 		return AttributeComp->IsAlive();
 	}
