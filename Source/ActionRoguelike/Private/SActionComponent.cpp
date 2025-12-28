@@ -29,6 +29,16 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugString);
 }
 
+TArray<USAction*> USActionComponent::GetActions()
+{
+	return Actions;
+}
+
+TArray<TSubclassOf<USAction>> USActionComponent::GetDefaultActionClasses()
+{
+	return DefaultActionsClasses;
+}
+
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
 	if (!ensure(ActionClass))

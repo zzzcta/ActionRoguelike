@@ -37,7 +37,10 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 	void ServerStartActionByName(AActor* Instigator, FName ActionClassName);
-
+	
+	TArray<USAction*> GetActions();
+	
+	TArray<TSubclassOf<USAction>> GetDefaultActionClasses();
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
