@@ -13,9 +13,9 @@ void USActionEffectThorns::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 
-	if (const USActionComponent* ActionComponent = GetOwningComponent())
+	if (const USActionComponent* ActionComp = GetOwningComponent())
 	{
-		if (const AActor* OwnerActor = ActionComponent->GetOwner())
+		if (const AActor* OwnerActor = ActionComp->GetOwner())
 		{
 			if (USAttributeComponent* OwnerAttributeComp = OwnerActor->FindComponentByClass<USAttributeComponent>())
 			{
@@ -29,9 +29,9 @@ void USActionEffectThorns::StopAction_Implementation(AActor* Instigator)
 {
 	Super::StopAction_Implementation(Instigator);
 	
-	if (const USActionComponent* ActionComponent = GetOwningComponent())
+	if (const USActionComponent* ActionComp = GetOwningComponent())
 	{
-		if (const AActor* OwnerActor = ActionComponent->GetOwner())
+		if (const AActor* OwnerActor = ActionComp->GetOwner())
 		{
 			if (USAttributeComponent* OwnerAttributeComp = OwnerActor->FindComponentByClass<USAttributeComponent>())
 			{
@@ -44,9 +44,9 @@ void USActionEffectThorns::StopAction_Implementation(AActor* Instigator)
 void USActionEffectThorns::ThornEffect(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
 	float Delta)
 {
-	if (const USActionComponent* ActionComponent = GetOwningComponent())
+	if (const USActionComponent* ActionComp = GetOwningComponent())
 	{
-		if (AActor* OwnerActor = ActionComponent->GetOwner())
+		if (AActor* OwnerActor = ActionComp->GetOwner())
 		{
 			if (InstigatorActor && InstigatorActor != OwnerActor)
 			{

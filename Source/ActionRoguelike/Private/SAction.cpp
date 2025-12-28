@@ -2,7 +2,13 @@
 
 #include "SAction.h"
 #include "SActionComponent.h"
+#include "ActionRoguelike/ActionRoguelike.h"
+#include "Net/UnrealNetwork.h"
 
+void USAction::Initialize(USActionComponent* NewActionComp)
+{
+	ActionComponent = NewActionComp;
+}
 
 bool USAction::CanStartAction_Implementation(AActor* Instigator)
 {
@@ -12,7 +18,7 @@ bool USAction::CanStartAction_Implementation(AActor* Instigator)
 	}
 
 	const USActionComponent* Comp = GetOwningComponent();
-	
+
 	if (Comp->ActiveGameplayTags.HasAny(BlockedTags))
 	{
 		return false;
@@ -22,42 +28,59 @@ bool USAction::CanStartAction_Implementation(AActor* Instigator)
 
 void USAction::StartAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("StartAction: %s"), *GetNameSafe(this));
-	
+	//UE_LOG(LogTemp, Log, TEXT("StartAction: %s"), *GetNameSafe(this));
+
+	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
+
 	USActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
-	
+
 	bIsRunning = true;
 }
 
 void USAction::StopAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("StopAction: %s"), *GetNameSafe(this));
-	
-	ensureAlways(bIsRunning);
-	
+	//UE_LOG(LogTemp, Log, TEXT("StopAction: %s"), *GetNameSafe(this));
+
+	LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
+
+	//ensureAlways(bIsRunning);
+
 	USActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantsTags);
-	
+
 	bIsRunning = false;
 }
 
 UWorld* USAction::GetWorld() const
 {
-	if (const USActionComponent* Comp = Cast<USActionComponent>(GetOuter()))
+	if (const AActor* Actor = Cast<AActor>(GetOuter()))
 	{
-		return Comp->GetWorld();
+		return Actor->GetWorld();
 	}
-	
+
 	return nullptr;
 }
 
 USActionComponent* USAction::GetOwningComponent() const
 {
-	return Cast<USActionComponent>(GetOuter());
+	return ActionComponent;
+}
+
+void USAction::OnRep_IsRunning()
+{
+	bIsRunning ? StartAction(nullptr) : StopAction(nullptr);
 }
 
 bool USAction::IsRunning() const
 {
 	return bIsRunning;
+}
+
+void USAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAction, bIsRunning)
+	DOREPLIFETIME(USAction, ActionComponent)
 }

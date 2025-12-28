@@ -3,31 +3,57 @@
 
 #include "SActionComponent.h"
 #include "SAction.h"
+#include "ActionRoguelike/ActionRoguelike.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
+
 	SetIsReplicatedByDefault(true);
 }
 
 void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	for (TSubclassOf<USAction> ActionClass : DefaultActionsClasses)
+
+	if (GetOwner()->HasAuthority())
 	{
-		AddAction(GetOwner(), ActionClass);
+		for (TSubclassOf<USAction> ActionClass : DefaultActionsClasses)
+		{
+			AddAction(GetOwner(), ActionClass);
+		}
 	}
 }
 
-void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+
+void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                      FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	FString DebugString = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugString);
+
+	// FString DebugString = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	// GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugString);
+
+
+	// Draw All Actions
+
+
+	for (const USAction* Action : Actions)
+	{
+		const FColor TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
+
+		const FString ActionMsg = FString::Printf(TEXT("[%s] Action: %s : IsRunning: %s : Outer: %s"),
+		                                          *GetNameSafe(GetOwner()),
+		                                          *Action->ActionName.ToString(),
+		                                          Action->IsRunning() ? TEXT("true") : TEXT("false"),
+		                                          *GetNameSafe(Action->GetOuter()));
+
+		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
+	}
 }
+
 
 TArray<USAction*> USActionComponent::GetActions()
 {
@@ -45,13 +71,14 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 	{
 		return;
 	}
-	
-	USAction* NewAction = NewObject<USAction>(this, ActionClass);
-	
+
+	USAction* NewAction = NewObject<USAction>(GetOwner(), ActionClass);
+
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
-		
+		NewAction->Initialize(this);
+
 		if (NewAction->bAutoStart && ensure(NewAction->CanStartAction(Instigator)))
 		{
 			NewAction->StartAction(Instigator);
@@ -64,8 +91,8 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
 	{
 		return;
-	} 
-	
+	}
+
 	Actions.Remove(ActionToRemove);
 }
 
@@ -81,12 +108,12 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionClassN
 				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsj);
 				continue;
 			}
-			
+
 			if (!GetOwner()->HasAuthority())
 			{
 				ServerStartActionByName(Instigator, ActionClassName);
 			}
-			
+
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -126,4 +153,24 @@ float USActionComponent::GetActionRageCost(const FName ActionClassName)
 void USActionComponent::ServerStartActionByName_Implementation(AActor* Instigator, FName ActionClassName)
 {
 	StartActionByName(Instigator, ActionClassName);
+}
+
+void USActionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USActionComponent, Actions);
+}
+
+bool USActionComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
+	FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	
+	for (USAction* Action : Actions)
+	{
+		WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+	}
+	
+	return WroteSomething;
 }
