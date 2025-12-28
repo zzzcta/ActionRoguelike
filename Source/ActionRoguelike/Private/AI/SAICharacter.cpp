@@ -4,7 +4,6 @@
 #include "AI/SAICharacter.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-#include "DrawDebugHelpers.h"
 #include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
@@ -12,7 +11,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/GameModeBase.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -41,17 +39,43 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::SetTargetActor(AActor* TargetActor)
 {
-	AAIController* AIC = Cast<AAIController>(GetController());
-	if (AIC)
+	if (AAIController* Aic = Cast<AAIController>(GetController()))
 	{
-		AIC->GetBlackboardComponent()->SetValueAsObject("TargetActor", TargetActor);
+		Aic->GetBlackboardComponent()->SetValueAsObject("TargetActor", TargetActor);
 	}
+}
+
+UObject* ASAICharacter::GetTargetActor()
+{
+	if (AAIController* Aic = Cast<AAIController>(GetController()))
+	{
+		return Aic->GetBlackboardComponent()->GetValueAsObject("TargetActor");
+	}
+	return nullptr;
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
+	if (Pawn != GetTargetActor())
+	{
+		if (PlayerSpottedWidgetClass && !ActivePlayerSpottedWidget)
+		{
+			ActivePlayerSpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+			if (ActivePlayerSpottedWidget)
+			{
+				ActivePlayerSpottedWidget->AttachedActor = this;
+				ActivePlayerSpottedWidget->AddToViewport();
+			}
+		}
+	} 
+	else
+	{
+		if (ActivePlayerSpottedWidget)
+		{
+			ActivePlayerSpottedWidget->RemoveFromParent();
+		}
+	}
 	SetTargetActor(Pawn);
-	DrawDebugString(GetWorld(), GetActorLocation(), "Player Spotted", nullptr, FColor::White, 3.0f, true);
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,

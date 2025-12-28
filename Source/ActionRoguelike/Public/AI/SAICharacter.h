@@ -31,6 +31,12 @@ protected:
 	USActionComponent* ActionComponent{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerSpottedWidgetClass{nullptr};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	USWorldUserWidget* ActivePlayerSpottedWidget{nullptr};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	USWorldUserWidget* ActiveHealthBarWidget{nullptr};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -41,7 +47,8 @@ protected:
 	
 	UFUNCTION()
 	void SetTargetActor(AActor* TargetActor);
-	
+	UObject* GetTargetActor();
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 	

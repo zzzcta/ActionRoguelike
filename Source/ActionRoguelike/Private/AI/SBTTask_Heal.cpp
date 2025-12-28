@@ -20,7 +20,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 			if (MyCharacterAttributeComp)
 			{
 				MyCharacterAttributeComp->ApplyHealthChange(nullptr, MyCharacterAttributeComp->GetMaxHealth());
-				DrawDebugString(GetWorld(), MyCharacter->GetActorLocation(), "Curita pls");
+				DrawDebugString(GetWorld(), MyCharacter->GetActorLocation(), "Curita pls", nullptr, FColor::Yellow, 1.5f);
 				return EBTNodeResult::Succeeded;
 			}
 		}
