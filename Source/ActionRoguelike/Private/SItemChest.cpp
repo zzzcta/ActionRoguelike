@@ -8,21 +8,27 @@
 // Sets default values
 ASItemChest::ASItemChest()
 {
-
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	RootComponent = BaseMesh;
-	
+
 	LidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LidMesh"));
 	LidMesh->SetupAttachment(BaseMesh);
 
 	TargetPitch = 110;
-	
+
 	bReplicates = true;
 }
 
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	bIsLidOpened = !bIsLidOpened;
+	OnRep_LidOpened();
+}
+
+void ASItemChest::OnActorLoaded_Implementation()
+{
+	ISGameplayInterface::OnActorLoaded_Implementation();
+
 	OnRep_LidOpened();
 }
 
@@ -35,7 +41,6 @@ void ASItemChest::OnRep_LidOpened()
 void ASItemChest::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
+
 	DOREPLIFETIME(ASItemChest, bIsLidOpened);
 }
-
