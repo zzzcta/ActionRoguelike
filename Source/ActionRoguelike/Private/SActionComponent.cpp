@@ -55,6 +55,11 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 
+void USActionComponent::ServerStopActionByName_Implementation(AActor* Instigator, FName ActionClassName)
+{
+	StopActionByName(Instigator, ActionClassName);
+}
+
 TArray<USAction*> USActionComponent::GetActions()
 {
 	return Actions;
@@ -71,6 +76,12 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 {
 	if (!ensure(ActionClass))
 	{
+		return;
+	}
+
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Trying to add action to non-authority actor: %s"), *GetNameSafe(GetOwner()));
 		return;
 	}
 
@@ -132,6 +143,12 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionClassNa
 		{
 			if (Action->IsRunning())
 			{
+				
+				if (!GetOwner()->HasAuthority())
+				{
+					ServerStopActionByName(Instigator, ActionClassName);
+				}
+				
 				Action->StopAction(Instigator);
 				return true;
 			}

@@ -38,6 +38,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerStartActionByName(AActor* Instigator, FName ActionClassName);
 
+	UFUNCTION(Server, Reliable)
+	void ServerStopActionByName(AActor* Instigator, FName ActionClassName);
+
 	TArray<USAction*> GetActions();
 
 	TArray<TSubclassOf<USAction>> GetDefaultActionClasses();
@@ -45,15 +48,16 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActionsClasses;
-	
+
 	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 	virtual void BeginPlay() override;
-	
+
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
-	
-	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+
+	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
+	                                 FReplicationFlags* RepFlags) override;
 };
