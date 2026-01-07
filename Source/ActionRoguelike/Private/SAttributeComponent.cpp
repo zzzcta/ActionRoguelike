@@ -34,7 +34,7 @@ void USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, const float 
 
 void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
 {
-	OnHealthChanged.Broadcast(InstigatorActor, this,CurrentRage, Delta);
+	OnHealthChanged.Broadcast(InstigatorActor, this,NewHealth, Delta);
 }
 
 bool USAttributeComponent::IsAlive() const
