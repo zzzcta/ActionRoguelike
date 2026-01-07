@@ -4,6 +4,8 @@
 USAttributeComponent::USAttributeComponent()
 {
 	Health = MaxHealth;
+
+	SetIsReplicatedByDefault(true);
 }
 
 bool USAttributeComponent::Kill()
@@ -21,12 +23,18 @@ float USAttributeComponent::GetMaxRage()
 	return MaxHealth;
 }
 
-void USAttributeComponent::ApplyRageChange(const float RageAmount)
+void USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, const float RageAmount)
 {
 	const float OldRage = CurrentRage;
-	CurrentRage = FMath::Clamp(CurrentRage + RageAmount , 0.0f, MaxRage);
+	CurrentRage = FMath::Clamp(CurrentRage + RageAmount, 0.0f, MaxRage);
 	const float ActualDelta = CurrentRage - OldRage;
-	OnRageChanged.Broadcast(this, CurrentRage, ActualDelta);
+	OnRageChanged.Broadcast(InstigatorActor, this, CurrentRage, ActualDelta);
+}
+
+
+void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this,CurrentRage, Delta);
 }
 
 bool USAttributeComponent::IsAlive() const
@@ -55,26 +63,33 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	{
 		return false;
 	}
-	
-	ApplyRageChange(-Delta);
-	
-	const float OldHealth = Health;
-	
-	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 
-	const float ActualDelta = Health - OldHealth;
-	
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
-	
-	// If actor died
-	if (Health <= 0.0f && ActualDelta < 0.0f)
+	ApplyRageChange(InstigatorActor, -Delta);
+
+	const float OldHealth = Health;
+	const float NewHealth = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
+
+	const float ActualDelta = NewHealth - OldHealth;
+
+	if (GetOwner()->HasAuthority())
 	{
-		if (ASGameModeBase* Gm = GetWorld()->GetAuthGameMode<ASGameModeBase>())
+		Health = NewHealth;
+
+		if (ActualDelta != 0.0f)
 		{
-			Gm->OnActorKilled(GetOwner(), InstigatorActor);
+			MulticastHealthChanged(InstigatorActor, NewHealth, ActualDelta);
+		}
+
+		// If actor died
+		if (Health <= 0.0f && ActualDelta < 0.0f)
+		{
+			if (ASGameModeBase* Gm = GetWorld()->GetAuthGameMode<ASGameModeBase>())
+			{
+				Gm->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
-	
+
 	return ActualDelta != 0.0f;
 }
 
@@ -84,7 +99,7 @@ USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* FromAc
 	{
 		return Cast<USAttributeComponent>(FromActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 	}
-	
+
 	return nullptr;
 }
 
@@ -94,10 +109,6 @@ bool USAttributeComponent::IsActorAlive(AActor* Actor)
 	{
 		return AttributeComp->IsAlive();
 	}
-	
+
 	return false;
 }
-
-
-
-

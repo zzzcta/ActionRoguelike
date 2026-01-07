@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat|Animations")
 	UAnimMontage* AttackAnim;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	UParticleSystem* MuzzleFlash{nullptr};
+	
 	UPROPERTY(VisibleAnywhere, Category = "Combat|Animations")
 	FName HandSocketName;
 	

@@ -2,6 +2,7 @@
 
 
 #include "SActionComponent.h"
+
 #include "SAction.h"
 #include "ActionRoguelike/ActionRoguelike.h"
 #include "Engine/ActorChannel.h"
@@ -13,6 +14,7 @@ USActionComponent::USActionComponent()
 
 	SetIsReplicatedByDefault(true);
 }
+
 
 void USActionComponent::BeginPlay()
 {
@@ -32,6 +34,7 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 
 	// FString DebugString = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
 	// GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugString);
@@ -60,10 +63,12 @@ TArray<USAction*> USActionComponent::GetActions()
 	return Actions;
 }
 
+
 TArray<TSubclassOf<USAction>> USActionComponent::GetDefaultActionClasses()
 {
 	return DefaultActionsClasses;
 }
+
 
 void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
@@ -85,6 +90,7 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 		}
 	}
 }
+
 
 void USActionComponent::RemoveAction(USAction* ActionToRemove)
 {
@@ -163,14 +169,14 @@ void USActionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimePropert
 }
 
 bool USActionComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
-	FReplicationFlags* RepFlags)
+                                            FReplicationFlags* RepFlags)
 {
 	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
-	
+
 	for (USAction* Action : Actions)
 	{
 		WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
 	}
-	
+
 	return WroteSomething;
 }

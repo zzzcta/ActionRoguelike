@@ -153,7 +153,7 @@ void ASCharacter::BlackHoleAttack()
 	if (AttributeComponent->GetRage() >= ActionComponent->GetActionRageCost("BlackHole"))
 	{
 		ActionComponent->StartActionByName(this, "BlackHole");
-		AttributeComponent->ApplyRageChange(-ActionComponent->GetActionRageCost("BlackHole"));
+		AttributeComponent->ApplyRageChange(this, -ActionComponent->GetActionRageCost("BlackHole"));
 	}
 }
 
