@@ -13,15 +13,12 @@ UCLASS()
 class ACTIONROGUELIKE_API ASCoin_PickUp : public ASPickUpBase
 {
 	GENERATED_BODY()
-	
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "PickUp")
 	int32 CoinsToEarn{10};
-	
-	UFUNCTION()
+
 	virtual void Interact_Implementation(APawn* PickUpInstigator) override;
-	
-	UFUNCTION()
+
 	virtual void OnPickUp_Implementation(APawn* PickUpInstigator) override;
-	
 };

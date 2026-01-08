@@ -6,6 +6,13 @@
 void ASPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
-	
+
 	OnSetPawnDelegate.Broadcast(InPawn);
+}
+
+
+void ASPlayerController::BeginPlayingState()
+{
+	Super::BeginPlayingState();
+	BlueprintBeginPlayingState();
 }

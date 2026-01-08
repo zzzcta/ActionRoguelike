@@ -8,53 +8,22 @@ USAttributeComponent::USAttributeComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-bool USAttributeComponent::Kill()
-{
-	return ApplyHealthChange(nullptr, -GetMaxHealth());
-}
-
-float USAttributeComponent::GetRage()
-{
-	return CurrentRage;
-}
-
-float USAttributeComponent::GetMaxRage()
-{
-	return MaxHealth;
-}
 
 void USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, const float RageAmount)
 {
 	const float OldRage = CurrentRage;
-	CurrentRage = FMath::Clamp(CurrentRage + RageAmount, 0.0f, MaxRage);
-	const float ActualDelta = CurrentRage - OldRage;
-	OnRageChanged.Broadcast(InstigatorActor, this, CurrentRage, ActualDelta);
-}
+	const float NewRage = FMath::Clamp(CurrentRage + RageAmount, 0.0f, MaxRage);
+	const float ActualDelta = NewRage - OldRage;
 
+	if (GetOwner()->HasAuthority())
+	{
+		CurrentRage = NewRage;
 
-void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
-{
-	OnHealthChanged.Broadcast(InstigatorActor, this,NewHealth, Delta);
-}
-
-bool USAttributeComponent::IsAlive() const
-{
-	return Health > 0;
-}
-
-float USAttributeComponent::GetHealth() const
-{
-	return Health;
-}
-
-float USAttributeComponent::GetMaxHealth() const
-{
-	return MaxHealth;
-}
-
-bool USAttributeComponent::IsFullHealth() const
-{
-	return Health == MaxHealth;
+		if (ActualDelta != 0.0f)
+		{
+			MulticastRageChanged(InstigatorActor, CurrentRage, ActualDelta);
+		}
+	}
 }
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
@@ -93,6 +62,37 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	return ActualDelta != 0.0f;
 }
 
+void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+void USAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
+}
+
+bool USAttributeComponent::IsAlive() const
+{
+	return Health > 0;
+}
+
+float USAttributeComponent::GetCurrentHealth() const
+{
+	return Health;
+}
+
+float USAttributeComponent::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
+bool USAttributeComponent::IsFullHealth() const
+{
+	return Health == MaxHealth;
+}
+
+
 USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* FromActor)
 {
 	if (FromActor)
@@ -111,4 +111,19 @@ bool USAttributeComponent::IsActorAlive(AActor* Actor)
 	}
 
 	return false;
+}
+
+bool USAttributeComponent::Kill()
+{
+	return ApplyHealthChange(nullptr, -GetMaxHealth());
+}
+
+float USAttributeComponent::GetRage()
+{
+	return CurrentRage;
+}
+
+float USAttributeComponent::GetMaxRage()
+{
+	return MaxHealth;
 }

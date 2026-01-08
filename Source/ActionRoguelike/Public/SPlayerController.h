@@ -16,9 +16,14 @@ class ACTIONROGUELIKE_API ASPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UPROPERTY(BlueprintAssignable)
 	FOnSetPawn OnSetPawnDelegate{};
 
 	virtual void SetPawn(APawn* InPawn) override;
+		
+	UFUNCTION(BlueprintImplementableEvent)
+	void BlueprintBeginPlayingState();
+	
+	virtual void BeginPlayingState() override;
 };

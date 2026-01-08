@@ -11,16 +11,14 @@ void ASCoin_PickUp::Interact_Implementation(APawn* PickUpInstigator)
 	if (bIsActive)
 	{
 		OnPickUp(PickUpInstigator);
-		bIsActive = false;
 	}
 }
 
 void ASCoin_PickUp::OnPickUp_Implementation(APawn* PickUpInstigator)
 {
 	Super::OnPickUp_Implementation(PickUpInstigator);
-	
-	ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState());
-	if (PlayerState)
+
+	if (ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState()))
 	{
 		PlayerState->AddCredits(CoinsToEarn);
 	}

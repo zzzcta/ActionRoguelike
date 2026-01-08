@@ -4,12 +4,13 @@
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsAmountChanged, ASPlayerState*, PlayerState, int32, NewCredits, int32, Delta);
+
 /**
  * 
  */
 
 class USSaveGame;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCreditsAmountChanged, int32, Credits);
 
 UCLASS()
 class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
@@ -17,14 +18,19 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing="OnRep_Credits")
 	int32 Credits{};
+	
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void AddCredits(int32 Amount);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void SubtractCredits(int32 Amount);
 
 	UFUNCTION(BlueprintPure)

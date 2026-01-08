@@ -36,6 +36,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Attributes")
@@ -54,7 +57,7 @@ public:
 	void ApplyRageChange(AActor* InstigatorActor, const float RageAmount);
 
 	UFUNCTION(BlueprintPure, Category = "Attributes")
-	float GetHealth() const;
+	float GetCurrentHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool Kill();

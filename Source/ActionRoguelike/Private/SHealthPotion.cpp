@@ -6,40 +6,36 @@ void ASHealthPotion::Interact_Implementation(APawn* PickUpInstigator)
 {
 	Super::Interact_Implementation(PickUpInstigator);
 
-	AttributeComp = Cast<USAttributeComponent>(PickUpInstigator->GetComponentByClass(USAttributeComponent::StaticClass()));
 
-	if ensure(AttributeComp)
+	if (const USAttributeComponent* AttributeComponent = PickUpInstigator->FindComponentByClass<USAttributeComponent>())
 	{
-		bCanHeal = AttributeComp->GetHealth() + HealthAmount < AttributeComp->GetMaxHealth();
+		bCanHeal = AttributeComponent->GetCurrentHealth() + HealthAmount < AttributeComponent->GetMaxHealth();
 	}
-	
-	ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState());
-	if (ensure(PlayerState))
+
+	if (const ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState())
+	)
 	{
 		bCanBuy = PlayerState->GetCredits() >= CoinsPrice;
 	}
-	
-	if (bIsActive && bCanHeal && bCanBuy)
+
+	if (bCanHeal && bCanBuy)
 	{
 		OnPickUp(PickUpInstigator);
-		bIsActive = false;
 	}
 }
 
 void ASHealthPotion::OnPickUp_Implementation(APawn* PickUpInstigator)
 {
 	Super::OnPickUp_Implementation(PickUpInstigator);
-	
-	ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState());
-	if (PlayerState)
+
+	if (ASPlayerState* PlayerState = Cast<ASPlayerState>(PickUpInstigator->GetPlayerState())
+	)
 	{
 		PlayerState->SubtractCredits(CoinsPrice);
 	}
-	
-	if ensure(AttributeComp)
+
+	if (USAttributeComponent* AttributeComponent = PickUpInstigator->FindComponentByClass<USAttributeComponent>())
 	{
-		AttributeComp->ApplyHealthChange(this, HealthAmount);
+		AttributeComponent->ApplyHealthChange(this, HealthAmount);
 	}
 }
-
-

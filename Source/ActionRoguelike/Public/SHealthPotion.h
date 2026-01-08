@@ -16,9 +16,6 @@ class ACTIONROGUELIKE_API ASHealthPotion : public ASPickUpBase
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
-	USAttributeComponent* AttributeComp{};
-
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float HealthAmount{10.0f};
 
