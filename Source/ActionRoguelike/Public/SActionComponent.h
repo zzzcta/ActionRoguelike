@@ -8,6 +8,7 @@
 #include "SActionComponent.generated.h"
 
 class USAction;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionChanged, USActionComponent*, ActionComponent, USAction*, Action);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ACTIONROGUELIKE_API USActionComponent : public UActorComponent
@@ -40,7 +41,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerStopActionByName(AActor* Instigator, FName ActionClassName);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Actions")
 	TArray<USAction*> GetActions();
 
 	TArray<TSubclassOf<USAction>> GetDefaultActionClasses();
@@ -55,6 +57,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnActionChanged OnActionStarted{};
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnActionChanged OnActionStopped{};
+	
+	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 

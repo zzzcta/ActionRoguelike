@@ -27,6 +27,9 @@ class ACTIONROGUELIKE_API USAction : public UObject
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UTexture2D* Texture{};
+	
 	UPROPERTY(Replicated)
 	USActionComponent* ActionComponent;
 
@@ -41,7 +44,10 @@ protected:
 
 	UPROPERTY(ReplicatedUsing="OnRep_RepData")
 	FActionRepData RepData;
-
+	
+	UPROPERTY(Replicated)
+	float TimeStarted{};
+	
 	UFUNCTION()
 	void OnRep_RepData();
 
