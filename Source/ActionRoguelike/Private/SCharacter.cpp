@@ -12,7 +12,7 @@
 #include "SAttributeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-static TAutoConsoleVariable<bool> CVarPlayerDebugInteraction(TEXT("su.PlayerDebugInteraction"), false, TEXT("Enable Player debug interaction."), ECVF_Cheat);
+static TAutoConsoleVariable<bool> CVarDebugInteraction(TEXT("su.PlayerDebugInteraction"), false, TEXT("Enable Player debug interaction."), ECVF_Cheat);
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -50,7 +50,7 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (!CVarPlayerDebugInteraction.GetValueOnGameThread())
+	if (!CVarDebugInteraction.GetValueOnGameThread())
 	{
 		return;
 	}

@@ -29,5 +29,6 @@ protected:
 	int32 CoinsPrice{};
 	
 	virtual void OnPickUp_Implementation(APawn* PickUpInstigator) override;
+	virtual FText GetMessageInteract_Implementation(APawn* PickUpInstigator) override;
 	virtual void Interact_Implementation(APawn* PickUpInstigator) override;
 };

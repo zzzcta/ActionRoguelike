@@ -27,5 +27,8 @@ public:
 	void Interact(APawn* Instigator);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FText GetMessageInteract(APawn* PickUpInstigator);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnActorLoaded();
 };

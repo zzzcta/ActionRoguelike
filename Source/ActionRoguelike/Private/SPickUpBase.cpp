@@ -19,6 +19,11 @@ void ASPickUpBase::Interact_Implementation(APawn* PickUpInstigator)
 	ISGameplayInterface::Interact_Implementation(PickUpInstigator);
 }
 
+FText ASPickUpBase::GetMessageInteract_Implementation(APawn* PickUpInstigator)
+{
+	return FText::GetEmpty();
+}
+
 void ASPickUpBase::OnPickUp_Implementation(APawn* PickUpInstigator)
 {
 	bIsActive = false;

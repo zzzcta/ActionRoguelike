@@ -37,6 +37,8 @@ protected:
 	void OnPickUp(APawn* PickUpInstigator);
 
 	virtual void Interact_Implementation(APawn* PickUpInstigator) override;
+	
+	virtual FText GetMessageInteract_Implementation(APawn* PickUpInstigator) override;
 
 	FTimerHandle TimerHandle_ReactivatePickUpDelay;
 };
