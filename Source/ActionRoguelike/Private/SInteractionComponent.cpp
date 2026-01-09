@@ -3,7 +3,7 @@
 #include "SGameplayInterface.h"
 #include "SWorldUserWidget.h"
 
-static TAutoConsoleVariable<bool> CVarDebugInteraction(TEXT("su.DebugInteraction"), false, TEXT("Enable debug interaction."), ECVF_Cheat);
+static TAutoConsoleVariable<bool> CVarPlayerDebugInteraction(TEXT("su.DebugInteraction"), false, TEXT("Enable debug interaction."), ECVF_Cheat);
 
 USInteractionComponent::USInteractionComponent()
 {
@@ -25,7 +25,7 @@ void USInteractionComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 
 void USInteractionComponent::FindInteractable()
 {
-	const bool bDebugInteraction = CVarDebugInteraction.GetValueOnGameThread();
+	const bool bDebugInteraction = CVarPlayerDebugInteraction.GetValueOnGameThread();
 	
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
