@@ -14,15 +14,19 @@ UCLASS()
 class ACTIONROGUELIKE_API USMonsterData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
-	
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Monster")
 	TSubclassOf<AActor> MonsterClass;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Monster")
 	TArray<TSubclassOf<USAction>> MonsterActions{};
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
 	UTexture2D* MonsterIcon{nullptr};
-	
+
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("Monsters", GetFName());
+	}
 };

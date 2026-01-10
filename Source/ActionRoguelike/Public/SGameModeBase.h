@@ -32,7 +32,7 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USMonsterData* MonsterData{};
+	FPrimaryAssetId MonsterId{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Weight{};
@@ -88,7 +88,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Utility")
 	TSubclassOf<ASPickUpBase> GetRandomItemClass() const;
-
+	
+	void OnMonsterLoaded(FPrimaryAssetId MonsterId, FVector SpawnLocation);
+	
 	UFUNCTION()
 	void OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 	

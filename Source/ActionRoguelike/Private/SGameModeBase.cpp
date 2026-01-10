@@ -9,6 +9,7 @@
 #include "SPlayerState.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -94,6 +95,7 @@ TSubclassOf<ASPickUpBase> ASGameModeBase::GetRandomItemClass() const
 	return ItemsToSpawn[FMath::RandRange(0, ItemsToSpawn.Num() - 1)];
 }
 
+
 void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
                                              EEnvQueryStatus::Type QueryStatus)
 {
@@ -150,15 +152,32 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 
 		FMonsterDataRow* OutRow = OutRows[FMath::RandRange(0, OutRows.Num() - 1)];
 
-		AActor* Actor = GetWorld()->SpawnActor<AActor>(OutRow->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
-		
-		if (Actor)
+		if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 		{
-			if (USActionComponent* ActionComp = Actor->FindComponentByClass<USActionComponent>())
+			const FPrimaryAssetId AssetId{OutRow->MonsterId};
+			const TArray<FName> Bundles;
+			FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(
+				this, &ASGameModeBase::OnMonsterLoaded, AssetId, SpawnLocations[0]);
+
+			AssetManager->LoadPrimaryAsset(AssetId, Bundles, Delegate);
+		}
+	}
+}
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId MonsterId, FVector SpawnLocation)
+{
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
+	{
+		if (USMonsterData* MonsterData = Cast<USMonsterData>(AssetManager->GetPrimaryAssetObject(MonsterId)))
+		{
+			if (AActor* Actor = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator))
 			{
-				for (TSubclassOf<USAction> Action : OutRow->MonsterData->MonsterActions)
+				if (USActionComponent* ActionComp = Actor->FindComponentByClass<USActionComponent>())
 				{
-					ActionComp->AddAction(Actor, Action);
+					for (TSubclassOf<USAction> Action : MonsterData->MonsterActions)
+					{
+						ActionComp->AddAction(Actor, Action);
+					}
 				}
 			}
 		}
