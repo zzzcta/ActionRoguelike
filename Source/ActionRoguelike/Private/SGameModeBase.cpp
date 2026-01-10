@@ -2,6 +2,7 @@
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SMonsterData.h"
 #include "SPickUpBase.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
@@ -136,12 +137,19 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 
 	TArray<FVector> SpawnLocations = QueryInstance->GetResultsAsLocations();
 
-	if (SpawnLocations.Num() == 0)
-	{
-		return;
-	}
+	if (SpawnLocations.Num() == 0) return;
 
-	GetWorld()->SpawnActor<AActor>(MinionClass, SpawnLocations[0], FRotator::ZeroRotator);
+	if (MonsterTable)
+	{
+		TArray<FMonsterDataRow*> OutRows;
+		MonsterTable->GetAllRows("", OutRows);
+
+		if (OutRows.Num() == 0) return;
+
+		FMonsterDataRow* OutRow = OutRows[FMath::RandRange(0, OutRows.Num() - 1)];
+
+		GetWorld()->SpawnActor<AActor>(OutRow->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
+	}
 }
 
 void ASGameModeBase::OnItemSpawnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
@@ -203,7 +211,7 @@ void ASGameModeBase::WriteSaveGame()
 	}
 
 	CurrentSaveGame->SavedActors.Empty();
-	
+
 	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
@@ -212,13 +220,13 @@ void ASGameModeBase::WriteSaveGame()
 			FActorSavedData ActorSavedData{};
 			ActorSavedData.ActorName = Actor->GetName();
 			ActorSavedData.ActorTransform = Actor->GetTransform();
-			
+
 			FMemoryWriter MemoryWriter{ActorSavedData.ByteData};
 			FObjectAndNameAsStringProxyArchive Ar{MemoryWriter, true};
 			Ar.ArIsSaveGame = true;
-			
+
 			Actor->Serialize(Ar);
-			
+
 			CurrentSaveGame->SavedActors.Add(ActorSavedData);
 		}
 	}
@@ -248,15 +256,15 @@ void ASGameModeBase::LoadSaveGame()
 					if (ActorSavedData.ActorName == Actor->GetName())
 					{
 						Actor->SetActorTransform(ActorSavedData.ActorTransform);
-						
+
 						FMemoryReader MemoryReader{ActorSavedData.ByteData};
 						FObjectAndNameAsStringProxyArchive Ar{MemoryReader, true};
 						Ar.ArIsSaveGame = true;
-						
+
 						Actor->Serialize(Ar);
-						
+
 						ISGameplayInterface::Execute_OnActorLoaded(Actor);
-						
+
 						break;
 					}
 				}
