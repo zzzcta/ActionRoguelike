@@ -1,5 +1,7 @@
 #include "SGameModeBase.h"
 #include "EngineUtils.h"
+#include "SAction.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
 #include "SMonsterData.h"
@@ -148,7 +150,18 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 
 		FMonsterDataRow* OutRow = OutRows[FMath::RandRange(0, OutRows.Num() - 1)];
 
-		GetWorld()->SpawnActor<AActor>(OutRow->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
+		AActor* Actor = GetWorld()->SpawnActor<AActor>(OutRow->MonsterData->MonsterClass, SpawnLocations[0], FRotator::ZeroRotator);
+		
+		if (Actor)
+		{
+			if (USActionComponent* ActionComp = Actor->FindComponentByClass<USActionComponent>())
+			{
+				for (TSubclassOf<USAction> Action : OutRow->MonsterData->MonsterActions)
+				{
+					ActionComp->AddAction(Actor, Action);
+				}
+			}
+		}
 	}
 }
 
