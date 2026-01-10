@@ -15,6 +15,8 @@ ASMagicProjectile::ASMagicProjectile()
 	SphereComponent->SetSphereRadius(20.0f);
 	FlightSound = CreateDefaultSubobject<UAudioComponent>("FlightSound");
 	FlightSound->SetupAttachment(SphereComponent);
+	
+	InitialLifeSpan = 10.0f;
 }
 
 void ASMagicProjectile::PostInitializeComponents()

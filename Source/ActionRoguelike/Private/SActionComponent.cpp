@@ -8,6 +8,7 @@
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 
+
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
