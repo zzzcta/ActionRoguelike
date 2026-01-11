@@ -30,6 +30,20 @@ void USActionComponent::BeginPlay()
 	}
 }
 
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	TArray<USAction*> ActionsCopy = Actions;
+	for (USAction* Action : ActionsCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
@@ -129,6 +143,8 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionClassN
 				ServerStartActionByName(Instigator, ActionClassName);
 			}
 
+			TRACE_BOOKMARK(TEXT("Started action: %s"), *GetNameSafe(Action))
+
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -144,12 +160,11 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionClassNa
 		{
 			if (Action->IsRunning())
 			{
-				
 				if (!GetOwner()->HasAuthority())
 				{
 					ServerStopActionByName(Instigator, ActionClassName);
 				}
-				
+
 				Action->StopAction(Instigator);
 				return true;
 			}

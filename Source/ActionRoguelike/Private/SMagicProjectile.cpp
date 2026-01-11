@@ -13,6 +13,7 @@
 ASMagicProjectile::ASMagicProjectile()
 {
 	SphereComponent->SetSphereRadius(20.0f);
+	RootComponent = SphereComponent;
 	FlightSound = CreateDefaultSubobject<UAudioComponent>("FlightSound");
 	FlightSound->SetupAttachment(SphereComponent);
 	
